@@ -1,6 +1,6 @@
 import React from "react";
 import HomePage from "./pages/home_page/HomePage";
-import { useConnection } from "./components/connection_provider";
+import { useConnection } from "./providers/connection_provider";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {

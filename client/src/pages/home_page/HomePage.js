@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useConfig } from "../../components/config_provider";
+import { useConfig } from "../../providers/config_provider";
 import "./home_page.scss";
 
 import { createCanvas } from "canvas";
+import axios from "axios";
 
 function HomePage() {
   const { configState, setConfigState } = useConfig();
@@ -13,6 +14,8 @@ function HomePage() {
     let uniques = 0;
     let duplicates = 0;
     let combinations = new Set()
+
+    let start = Date.now();
 
     // Clear old outputs
     for await (let [filename] of configState.outputDirHandle) {
@@ -53,34 +56,40 @@ function HomePage() {
 
         uniques++;
 
-        // Save current image in canvas to <OUTPUT_DIR>/images in png format
+        // Save current image to <OUTPUT_DIR>/images in png format
         const imagesDirHandle = await configState.outputDirHandle.getDirectoryHandle("images", { create: true })
         const iHandle = await imagesDirHandle.getFileHandle(uniques.toString() + '.png', { create: true })
         const iStream = await iHandle.createWritable({ keepExistingData: false })
         const blob = await new Promise(
           (resolve) => canvas.toBlob(blob => resolve(blob), "image/png")
         );
-        const fr = new FileReader()
-        fr.readAsArrayBuffer(blob);
-        fr.onload = () => {
-          iStream.write(fr.result);
-          iStream.close()
-        }
+        iStream.write(blob);
+        iStream.close()
 
-        // Save metadata of current image to <OUTPUT_DIR>/images in json format
+        // Upload image to IPFS
+        const instance = axios.create({
+          baseURL: 'https://api.nft.storage/upload',
+          headers: { 'Authorization': 'Bearer ' + process.env.REACT_APP_API_KEY }
+        });
+        const response = await instance.post("/", blob)
+
+        // Construct metadata
         const metadata = {
           name: `${configState.namePrefix} #${uniques}`,
           description: configState.commonDescription,
-          image: `${'ipfsFolderUri'}/${uniques}.png`,
+          image: response.data.value.cid,
           properties: attributesList,
         };
         attributesList = [];
 
+        // Save metadata of current image to <OUTPUT_DIR>/metadata
         const metadataDirHandle = await configState.outputDirHandle.getDirectoryHandle("metadata", { create: true })
         const mHandle = await metadataDirHandle.getFileHandle(uniques.toString() + '.json', { create: true })
         const mStream = await mHandle.createWritable({ keepExistingData: false })
         mStream.write(JSON.stringify(metadata));
         mStream.close()
+
+        console.log("Image ", uniques, " Done")
 
         combinations.add(newCombination);
       } else {
@@ -92,6 +101,8 @@ function HomePage() {
         }
       }
     }
+
+    console.log((Date.now() - start) / 1000, " seconds")
   }
 
   const createCombination = () => {

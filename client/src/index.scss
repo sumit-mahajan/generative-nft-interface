@@ -1,0 +1,97 @@
+// @font-face {
+//   font-family: "Circular";
+//   src: url("./CircularStd-Medium.ttf");
+// }
+
+:root {
+  /* Colors */
+  --bg-color: white;
+  --primary: #4a47a3;
+  --secondary: #b6b5da;
+  --separator-color: rgba(0, 0, 0, 0.25);
+
+  /* Sizes */
+  --root-font-size: 10px;
+  --body-padding: 100px;
+  --content-size: 1.8rem;
+  --sm-content-size: 1.6rem;
+
+  font-size: var(--root-font-size);
+  font-family: "Circular";
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --body-padding: 70px;
+    --root-font-size: 9px;
+  }
+}
+
+@media (max-width: 998px) {
+  :root {
+    --body-padding: 45px;
+    --root-font-size: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --body-padding: 20px;
+    --root-font-size: 7.5px;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+
+  font-size: var(--content-size);
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  // width: 100%; /* For ignorng scrollbar width*/
+  // padding: 0% var(--body-padding);
+  overflow-x: hidden;
+}
+
+.container {
+  width: 100%;
+  padding: 0% var(--body-padding);
+}
+
+::-webkit-scrollbar {
+  width: 1rem;
+}
+
+::-webkit-scrollbar-track {
+  background-image: linear-gradient(to bottom, white, var(--bg-color));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 0 5px var(--separator-color);
+  border: solid 0.35rem white;
+  border-radius: 1rem;
+}
+
+*::selection {
+  color: var(--bg-color);
+  background: var(--primary);
+}
+
+a,
+a:link,
+a:active,
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+

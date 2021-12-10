@@ -4,15 +4,15 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ConnectionProvider } from './providers/connection_provider';
-import { ConfigProvider } from './providers/config_provider';
+import { GenerateProvider } from './providers/generate_provider';
 
 // Wrapped in ConnectionProvider to get a global state using context API
 ReactDOM.render(
-    <ConfigProvider>
+    <GenerateProvider>
         <ConnectionProvider>
             <App />
         </ConnectionProvider>
-    </ConfigProvider>,
+    </GenerateProvider>,
     document.getElementById('root')
 );
 

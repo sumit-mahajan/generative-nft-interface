@@ -1,5 +1,5 @@
 import React from "react";
-import HomePage from "./pages/home_page/HomePage";
+import GeneratePage from "./pages/generate_page/GeneratePage";
 import { useConnection } from "./providers/connection_provider";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div>
-      <HomePage />
+      <GeneratePage />
     </div>
   );
 }

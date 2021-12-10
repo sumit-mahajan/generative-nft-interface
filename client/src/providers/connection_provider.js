@@ -75,7 +75,8 @@ export function ConnectionProvider(props) {
         // Mumbai
         const newInstance = new web3.eth.Contract(
           Marketplace.abi,
-          process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
+          "0x50DA615718BF02C977992dF52a4c8895681e8886"
+          // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
         );
 
         return newInstance;
@@ -84,7 +85,7 @@ export function ConnectionProvider(props) {
   }
 
   async function createCollectionInstance(web3, cAddress) {
-    return new web3.eth.Contract(
+    return await new web3.eth.Contract(
       CustomCollection.abi,
       cAddress
     );
@@ -177,7 +178,7 @@ export function ConnectionProvider(props) {
           connectionState,
           setConnectionState,
           connectWallet,
-          switchNetwork,
+          createCollectionInstance,
         }}
       >
         {props.children}

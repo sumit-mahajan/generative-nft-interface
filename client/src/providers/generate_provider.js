@@ -15,10 +15,10 @@ export function GenerateProvider(props) {
     const [configState, setConfigState] = useState({
         inputDirHandle: null,
         outputDirHandle: null,
-        namePrefix: "Cryptopunk",
+        namePrefix: "Rinnegan",
         commonDescription: "Common description",
         outputSize: 5,
-        generateLocal: true,
+        generateLocal: false,
         format: {
             width: 512,
             height: 512,

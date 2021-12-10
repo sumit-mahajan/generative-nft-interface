@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useConnection } from "../../providers/connection_provider";
 import { useGenerate } from "../../providers/generate_provider";
 import "./generate_page.scss";
 
 function GeneratePage() {
   const navigate = useNavigate()
+  const { connectionState } = useConnection()
+  const { web3, accounts, mContract, errors } = connectionState;
 
   const { configState, setConfigState, setInputDir, setOutputDir, createImages } = useGenerate();
 
@@ -44,6 +47,10 @@ function GeneratePage() {
 
     setConfigState({ ...configState, properties });
   };
+
+  if (!web3 || accounts.length === 0 || errors) {
+    return errors;
+  }
 
   return (
     <div>

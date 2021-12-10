@@ -22,17 +22,35 @@ function CollectionPage() {
         twitterUrl: "",
         websiteUrl: "",
     })
-    const [cImage, setCImage] = useState()
+    const [cImage, setCImage] = useState("")
     const [activeReqs, setActiveReqs] = useState(0)
 
     const handleImage = async (e) => {
         setActiveReqs(activeReqs + 1)
         const blob = e.target.files[0]
-        setCImage(blob)
+        setCImage(URL.createObjectURL(blob))
 
         const imageCID = await uploadImage(blob)
         setMetadata({ ...metadata, image: imageCID })
         setActiveReqs(activeReqs - 1)
+    }
+
+    const validateInput = () => {
+        let errorField
+        if (metadata.name === "") {
+            errorField = "name"
+        } else if (metadata.symbol === "") {
+            errorField = "symbol"
+        } else if (metadata.image === "") {
+            errorField = "image"
+        } else if (metadata.description === "") {
+            errorField = "description"
+        } else if (metadata.twitterUrl === "") {
+            errorField = "twitterUrl"
+        } else if (metadata.websiteUrl === "") {
+            errorField = "websiteUrl"
+        }
+        return errorField
     }
 
     const waitTillReqsDone = () => {
@@ -45,6 +63,13 @@ function CollectionPage() {
     const handleSubmit = async () => {
         waitTillReqsDone()
 
+        const error = validateInput()
+        if (error) {
+            document.getElementById('error-field').innerHTML = error + " is empty";
+            return;
+        }
+        document.getElementById('error-field').innerHTML = "";
+
         const metadataCID = await uploadMetadata(JSON.stringify(metadata))
 
         const transaction = await mContract.methods
@@ -53,7 +78,7 @@ function CollectionPage() {
 
         const event = transaction.events.CollectionCreated.returnValues;
 
-        setMintState({ ...mintState, collection: { address: event.cAddress, imageBlob: cImage, metadata: metadata, metadataCID } })
+        setMintState({ ...mintState, collection: { address: event.cAddress, imageUrl: cImage, metadata: metadata, metadataCID } })
 
         navigate('/mint')
     }
@@ -64,18 +89,19 @@ function CollectionPage() {
 
     return (<div>
         <Box height="20" />
-        <input type="file" onChange={(e) => { handleImage(e) }} required />
+        <input type="file" onChange={(e) => { handleImage(e) }} />
         <Box height="20" />
-        <input type="text" onChange={(e) => { setMetadata({ ...metadata, name: e.target.value }) }} placeholder="name" required />
+        <input type="text" onChange={(e) => { setMetadata({ ...metadata, name: e.target.value }) }} placeholder="name" />
         <Box height="20" />
-        <input type="text" onChange={(e) => { setMetadata({ ...metadata, symbol: e.target.value }) }} placeholder="symbol" required />
+        <input type="text" onChange={(e) => { setMetadata({ ...metadata, symbol: e.target.value }) }} placeholder="symbol" />
         <Box height="20" />
-        <input type="text" onChange={(e) => { setMetadata({ ...metadata, description: e.target.value }) }} placeholder="description" required />
+        <input type="text" onChange={(e) => { setMetadata({ ...metadata, description: e.target.value }) }} placeholder="description" />
         <Box height="20" />
-        <input type="text" onChange={(e) => { setMetadata({ ...metadata, twitterUrl: e.target.value }) }} placeholder="twitterUrl" required />
+        <input type="text" onChange={(e) => { setMetadata({ ...metadata, twitterUrl: e.target.value }) }} placeholder="twitterUrl" />
         <Box height="20" />
-        <input type="text" onChange={(e) => { setMetadata({ ...metadata, websiteUrl: e.target.value }) }} placeholder="websiteUrl" required />
+        <input type="text" onChange={(e) => { setMetadata({ ...metadata, websiteUrl: e.target.value }) }} placeholder="websiteUrl" />
         <Box height="20" />
+        <p id="error-field"></p>
         <button onClick={handleSubmit}>Submit</button>
     </div>);
 }

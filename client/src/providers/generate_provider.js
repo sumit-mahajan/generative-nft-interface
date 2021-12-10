@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createCanvas } from "canvas";
-import upload from "../services/ipfs_service";
+import { uploadImage } from "../services/ipfs_service";
+import { useMint } from './mint_provider'
 
 const GenerateContext = React.createContext();
 
@@ -9,19 +10,21 @@ export function useGenerate() {
 }
 
 export function GenerateProvider(props) {
+    const { mintState, setMintState } = useMint()
+
     const [configState, setConfigState] = useState({
         inputDirHandle: null,
         outputDirHandle: null,
         namePrefix: "Cryptopunk",
         commonDescription: "Common description",
-        outputSize: 100,
+        outputSize: 5,
         generateLocal: true,
-        properties: [],
         format: {
             width: 512,
             height: 512,
         },
-        nfts: []
+        properties: [],
+        isDone: false,
     });
 
     const setInputDir = async () => {
@@ -82,7 +85,7 @@ export function GenerateProvider(props) {
     const propertiesFromCombination = (_combination, _properties) => {
         let combinationToProperties = _properties.map((property, index) => {
             let selectedValue = property.values.find(
-                (e) => e.id == Number(_combination.split("-")[index])
+                (e) => e.id === Number(_combination.split("-")[index])
             );
             return {
                 name: property.name,
@@ -114,7 +117,7 @@ export function GenerateProvider(props) {
                 combinations.add(newCombination);
             } else {
                 duplicates++;
-                if (duplicates == configState.outputSize * 10) {
+                if (duplicates === configState.outputSize * 10) {
                     console.log("Need more properties and values");
                     return;
                 }
@@ -181,7 +184,7 @@ export function GenerateProvider(props) {
             activeReqs++;
 
             // Upload image to IPFS
-            const imageCID = await upload(blob);
+            const imageCID = await uploadImage(blob);
 
             activeReqs--;
 
@@ -211,11 +214,11 @@ export function GenerateProvider(props) {
                 metadata
             })
 
-            setConfigState({ ...configState, nfts });
-
             count++
 
-            if (count == configState.outputSize) {
+            if (count === configState.outputSize) {
+                setConfigState({ ...configState, isDone: true })
+                setMintState({ ...mintState, nfts })
                 console.log("Took ", (Date.now() - startTime) / 1000, " seconds to generate")
             }
         })

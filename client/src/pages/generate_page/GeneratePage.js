@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useGenerate } from "../../providers/generate_provider";
 import "./generate_page.scss";
 
 function GeneratePage() {
+  const navigate = useNavigate()
+
   const { configState, setConfigState, setInputDir, setOutputDir, createImages } = useGenerate();
 
   const [dragId, setDragId] = useState();
@@ -50,6 +53,8 @@ function GeneratePage() {
       <br />
       <button onClick={createImages}>Create Images</button>
       <br />
+      {configState.isDone ? <button onClick={() => { navigate('/collection') }}>Go to Mint</button> : <div></div>}
+      <br />
       <br />
       {configState.properties.slice().reverse().map(property =>
         <div
@@ -66,14 +71,6 @@ function GeneratePage() {
         </div>
       )}
       <br />
-      <br />
-      {configState.nfts.map(nft =>
-        <div key={nft.id}>
-          <img src={nft.image} />
-          <p>{nft.metadata.name}</p>
-          <p>{nft.metadata.image}</p>
-        </div>
-      )}
     </div>
   );
 }

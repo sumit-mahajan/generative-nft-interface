@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import Marketplace from "../contracts/Marketplace.json";
+import CustomCollection from "../contracts/CustomCollection.json";
 import Web3 from "web3";
 
-// Rinkeby address : 0xA6d67d9bEB9CBE76F55047C99E0a7f51BdD50C36
-
 //TODO: Set test/production mode
-const isTest = process.env.REACT_APP_ISTEST === "yes";
+const isTest = true;
 
 const ConnectionContext = React.createContext();
 
@@ -16,11 +15,10 @@ export function useConnection() {
 export function ConnectionProvider(props) {
   const [connectionState, setConnectionState] = useState({
     web3: null,
-    networkName: isTest ? "Localhost" : "Rinkeby",
+    networkName: isTest ? "Localhost" : "Mumbai",
     accounts: [],
-    appContract: null,
+    mContract: null,
     errors: null,
-    poll: "Home", // Not a part of connection but rather used for changing page
   });
 
   const initiate = async () => {
@@ -31,31 +29,31 @@ export function ConnectionProvider(props) {
       const provider = new Web3.providers.HttpProvider(
         isTest ?
           "http://127.0.0.1:7545" :
-          "https://rinkeby.infura.io/v3/" + process.env.REACT_APP_INFURA_KEY
+          "https://rpc-mumbai.maticvigil.com"
       );
       const web3 = new Web3(provider);
 
-      const appContract = await createAppInstance(web3);
+      const mContract = await createMarketplaceInstance(web3);
 
       setConnectionState({
         ...connectionState,
         web3,
-        appContract,
-        networkName: isTest ? "Localhost" : "Rinkeby",
+        mContract,
+        networkName: isTest ? "Localhost" : "Mumbai",
       });
     } catch (e) {
       console.log("useConnection Error ", e);
       if (e !== "Use Correct Network") {
-        e = "Can't connect to Rinkeby right now. Try again after some time"
+        e = "Can't connect to Mumbai testnet right now. Try again after some time"
       } else {
-        e = "You are using wrong network. Switch to " + isTest ? "Localhost 7545" : "Rinkeby Testnet";
+        e = "You are using wrong network. Switch to " + isTest ? "Localhost 7545" : "Mumbai Testnet";
       }
 
       setConnectionState({ ...connectionState, errors: e });
     }
   };
 
-  async function createAppInstance(web3) {
+  async function createMarketplaceInstance(web3) {
     if (web3) {
       const networkId = await web3.eth.net.getId();
       console.log("IsTest: ", isTest);
@@ -74,10 +72,10 @@ export function ConnectionProvider(props) {
           throw "Use Correct Network";
         }
       } else {
-        // Rinkeby
+        // Mumbai
         const newInstance = new web3.eth.Contract(
           Marketplace.abi,
-          process.env.REACT_APP_RINKEBY_CONTRACT_ADDRESS
+          process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
         );
 
         return newInstance;
@@ -85,19 +83,26 @@ export function ConnectionProvider(props) {
     }
   }
 
+  async function createCollectionInstance(web3, cAddress) {
+    return new web3.eth.Contract(
+      CustomCollection.abi,
+      cAddress
+    );
+  }
+
   useEffect(() => {
     initiate();
-    // connectWallet();
+    connectWallet();
 
     // Detect metamask account change
     window.ethereum.on("accountsChanged", async function (_accounts) {
       const web3 = await getWeb3();
-      const appContract = await createAppInstance(web3);
+      const mContract = await createMarketplaceInstance(web3);
       setConnectionState({
         ...connectionState,
         web3,
         accounts: _accounts,
-        appContract,
+        mContract,
       });
     });
 
@@ -118,23 +123,17 @@ export function ConnectionProvider(props) {
 
       // Set networkName for navbar
       switch (networkId) {
+        case 137:
+          networkName = "Matic Mainnet";
+          break;
+        case 80001:
+          networkName = "Mumbai Testnet";
+          break;
         case 1:
-          networkName = "Mainnet";
-          break;
-        case 2:
-          networkName = "Morden";
-          break;
-        case 3:
-          networkName = "Ropsten";
+          networkName = "Ethereum Mainnet";
           break;
         case 4:
-          networkName = "Rinkeby";
-          break;
-        case 5:
-          networkName = "Goerli";
-          break;
-        case 42:
-          networkName = "Kovan";
+          networkName = "Rinkeby Testnet";
           break;
         case 5777:
           networkName = "Localhost 7545";
@@ -145,18 +144,18 @@ export function ConnectionProvider(props) {
 
       const accounts = await web3.eth.getAccounts();
 
-      const appContract = await createAppInstance(web3);
+      const mContract = await createMarketplaceInstance(web3);
 
       setConnectionState({
         ...connectionState,
         web3,
         networkName,
         accounts,
-        appContract,
+        mContract,
       });
     } catch (e) {
       if (e === "Use Correct Network") {
-        e = "You are using wrong network. Switch to " + (isTest ? "Localhost 7545" : "Rinkeby Testnet");
+        e = "You are using wrong network. Switch to " + (isTest ? "Localhost 7545" : "Mumabi Testnet");
       }
       console.log("useConnection Error ", e);
       setConnectionState({ ...connectionState, errors: e });

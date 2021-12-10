@@ -5,14 +5,17 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ConnectionProvider } from './providers/connection_provider';
 import { GenerateProvider } from './providers/generate_provider';
+import { MintProvider } from './providers/mint_provider';
 
 // Wrapped in ConnectionProvider to get a global state using context API
 ReactDOM.render(
-    <GenerateProvider>
-        <ConnectionProvider>
-            <App />
-        </ConnectionProvider>
-    </GenerateProvider>,
+    <ConnectionProvider>
+        <MintProvider>
+            <GenerateProvider>
+                <App />
+            </GenerateProvider>
+        </MintProvider>
+    </ConnectionProvider>,
     document.getElementById('root')
 );
 

@@ -1,7 +1,9 @@
 import React from "react";
-import GeneratePage from "./pages/generate_page/GeneratePage";
-import { useConnection } from "./providers/connection_provider";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useConnection } from "./providers/connection_provider";
+import GeneratePage from "./pages/generate_page/GeneratePage";
+import CollectionPage from "./pages/collection_page/CollectionPage";
+import MintPage from "./pages/mint_page/MintPage";
 
 function App() {
   const { connectionState } = useConnection();
@@ -21,7 +23,13 @@ function App() {
 
   return (
     <div>
-      <GeneratePage />
+      <Router>
+        <Routes>
+          <Route path="/" element={<GeneratePage />} />
+          <Route path="/collection" element={<CollectionPage />} />
+          <Route path="/mint" element={<MintPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

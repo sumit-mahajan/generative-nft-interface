@@ -92,7 +92,7 @@ export function ConnectionProvider(props) {
   }
 
   useEffect(() => {
-    initiate();
+    // initiate();
     connectWallet();
 
     // Detect metamask account change

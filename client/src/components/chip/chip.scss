@@ -1,0 +1,11 @@
+.chip-container {
+    padding: 7.5px 10px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: var(--secondary);
+    cursor: pointer;
+}
+
+.chip-content {
+    font-size: var(--xs-text-size);
+}

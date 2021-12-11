@@ -15,16 +15,12 @@ export function GenerateProvider(props) {
     const [configState, setConfigState] = useState({
         inputDirHandle: null,
         outputDirHandle: null,
-        namePrefix: "Rinnegan",
-        commonDescription: "Common description",
-        outputSize: 5,
-        generateLocal: false,
-        format: {
-            width: 512,
-            height: 512,
-        },
+        namePrefix: "",
+        commonDescription: "",
+        width: 512,
+        height: 512,
+        outputSize: 0,
         properties: [],
-        isDone: false,
     });
 
     const setInputDir = async () => {
@@ -95,10 +91,10 @@ export function GenerateProvider(props) {
         return combinationToProperties;
     };
 
-    const createImages = async () => {
+    const createImages = async (fn) => {
         let startTime = Date.now()
 
-        if (configState.generateLocal) {
+        if (configState.outputDirHandle !== null) {
             // Clear old output images and metadata
             for await (let [filename] of configState.outputDirHandle) {
                 configState.outputDirHandle.removeEntry(filename, { recursive: true })
@@ -140,9 +136,9 @@ export function GenerateProvider(props) {
             let attributesList = []
             let selectedValues = propertiesFromCombination(combination, configState.properties);
 
-            const canvas = createCanvas(configState.format.width, configState.format.height);
+            const canvas = createCanvas(configState.width, configState.height);
             const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, configState.format.width, configState.format.height);
+            ctx.clearRect(0, 0, configState.width, configState.height);
 
             for await (let property of selectedValues) {
                 const image = await property.selectedValue.fileHandle.getFile()
@@ -153,8 +149,8 @@ export function GenerateProvider(props) {
                     imageBitmap,
                     0,
                     0,
-                    configState.format.width,
-                    configState.format.height
+                    configState.width,
+                    configState.height
                 );
 
                 // Add property and value to attributesList
@@ -171,7 +167,7 @@ export function GenerateProvider(props) {
             );
 
             // Save current image to <OUTPUT_DIR>/images in png format
-            if (configState.generateLocal) {
+            if (configState.outputDirHandle !== null) {
                 const imagesDirHandle = await configState.outputDirHandle.getDirectoryHandle("images", { create: true })
                 const iHandle = await imagesDirHandle.getFileHandle((index + 1).toString() + '.png', { create: true })
                 const iStream = await iHandle.createWritable({ keepExistingData: false })
@@ -198,7 +194,7 @@ export function GenerateProvider(props) {
             attributesList = [];
 
             // Save metadata of current image to <OUTPUT_DIR>/metadata
-            if (configState.generateLocal) {
+            if (configState.outputDirHandle !== null) {
                 const metadataDirHandle = await configState.outputDirHandle.getDirectoryHandle("metadata", { create: true })
                 const mHandle = await metadataDirHandle.getFileHandle((index + 1).toString() + '.json', { create: true })
                 const mStream = await mHandle.createWritable({ keepExistingData: false })
@@ -217,9 +213,9 @@ export function GenerateProvider(props) {
             count++
 
             if (count === configState.outputSize) {
-                setConfigState({ ...configState, isDone: true })
                 setMintState({ ...mintState, nfts })
                 console.log("Took ", (Date.now() - startTime) / 1000, " seconds to generate")
+                fn() // Callback
             }
         })
     }

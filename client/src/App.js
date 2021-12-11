@@ -4,6 +4,7 @@ import { useConnection } from "./providers/connection_provider";
 import GeneratePage from "./pages/generate_page/GeneratePage";
 import CollectionPage from "./pages/collection_page/CollectionPage";
 import MintPage from "./pages/mint_page/MintPage";
+import Navbar from "./components/navbar/Navbar";
 
 function App() {
   const { connectionState } = useConnection();
@@ -23,6 +24,7 @@ function App() {
 
   return (
     <div>
+      <Navbar />
       <Router>
         <Routes>
           <Route path="/" element={<GeneratePage />} />

@@ -24,8 +24,8 @@ function App() {
 
   return (
     <div>
-      <Navbar />
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<GeneratePage />} />
           <Route path="/collection" element={<CollectionPage />} />

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useConnection } from '../../providers/connection_provider';
-import BorderButton from '../border_button/BorderButton';
 import { Box } from '../Box';
 import Chip from '../chip/Chip';
 import './navbar.scss'
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
     const { connectionState, setConnectionState, connectWallet } = useConnection();
     const { web3, accounts, networkName } = connectionState;
+    const navigate = useNavigate()
 
     return (
         <nav className="no-select">
-            <div className="logo">caya</div>
+            <div onClick={() => { navigate('/') }} className="logo">caya</div>
 
             <div className="nav-btn-flex">
                 <Chip content={networkName.toLowerCase()} />
@@ -23,13 +24,21 @@ function Navbar() {
                         content={accounts[0].substring(0, 5) + "..." + accounts[0].substring(accounts[0].length - 3, accounts[0].length)}
                     /> :
                     <BorderButton
-                        onclick={connectWallet}
+                        onClick={connectWallet}
                         content="connect"
                     />
                 }
 
             </div>
         </nav>
+    );
+}
+
+function BorderButton(props) {
+    return (
+        <div onClick={props.onClick} className="border-button" >
+            {props.content}
+        </div>
     );
 }
 

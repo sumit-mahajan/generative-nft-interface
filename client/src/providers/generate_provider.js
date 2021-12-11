@@ -21,6 +21,8 @@ export function GenerateProvider(props) {
         height: 512,
         outputSize: 0,
         properties: [],
+        isDone: false,
+        error: "",
     });
 
     const setInputDir = async () => {
@@ -91,7 +93,7 @@ export function GenerateProvider(props) {
         return combinationToProperties;
     };
 
-    const createImages = async (fn) => {
+    const createImages = async () => {
         let startTime = Date.now()
 
         if (configState.outputDirHandle !== null) {
@@ -115,6 +117,7 @@ export function GenerateProvider(props) {
                 duplicates++;
                 if (duplicates === configState.outputSize * 10) {
                     console.log("Need more properties and values");
+                    setConfigState({ ...configState, error: 'Need more properties and values' })
                     return;
                 }
             }
@@ -212,10 +215,10 @@ export function GenerateProvider(props) {
 
             count++
 
-            if (count === configState.outputSize) {
+            if (count.toString() === configState.outputSize.toString()) {
+                setConfigState({ ...configState, isDone: true })
                 setMintState({ ...mintState, nfts })
                 console.log("Took ", (Date.now() - startTime) / 1000, " seconds to generate")
-                fn() // Callback
             }
         })
     }

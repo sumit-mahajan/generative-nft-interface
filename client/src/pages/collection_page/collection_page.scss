@@ -1,0 +1,23 @@
+.image-picker {
+    height: 250px;
+    width: 250px;
+    background-color: var(--secondary);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.flex-child, .selltype {
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    label {
+        font-size: var(--sm-text-size);
+    }
+}
+
+.selltype {
+    justify-content: space-between;
+}
+
+

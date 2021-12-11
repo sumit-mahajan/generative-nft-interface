@@ -122,7 +122,8 @@ span {
 }
 
 button {
-  width: 500px;
+  // width: calc(100vw - 2 * var(--body-padding) - 25px);
+  width: 625px;
   padding: 7.5px 10px;
   color: white;
   font-size: var(--sm-text-size);
@@ -130,6 +131,18 @@ button {
   background-color: var(--primary);
   border-radius: 10px;
   border: none;
+  cursor: pointer;
+}
+
+.outlined-btn {
+  // width: calc(100vw - 2 * var(--body-padding) - 25px);
+  width: 625px;
+  background-color: var(--bg-color);
+  font-size: var(--sm-text-size);
+  padding: 7.5px 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -161,5 +174,31 @@ button {
 
   input:focus {
       border: 1px solid rgba(0, 0, 0, 1);
+  }
+}
+
+.row-flex {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;   
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(4,24%);
+  grid-row-gap: 30px;
+  grid-column-gap: 20px;
+
+  .nft-card {
+      aspect-ratio: 1/1;
+      img {
+          border-radius: 10px;
+      }
+
+      .caption {
+          font-size: var(--sm-text-size);
+          text-align: center;
+      }
   }
 }

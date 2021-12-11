@@ -1,10 +1,3 @@
-.row-flex {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;   
-}
-
 .dir-flex {
     flex: 1;
     display: flex;
@@ -43,6 +36,14 @@
             width: 2.5rem;
             background-color: var(--primary);
         }
+    }
+
+    .rarity-btn {
+        // position: absolute;
+        // right: 20px;
+        margin-left: auto;
+        font-size: var(--sm-text-size);
+        cursor: pointer;
     }
 }
 

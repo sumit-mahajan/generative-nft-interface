@@ -251,6 +251,7 @@ function CollectionPage() {
                             }}
                             max={1e5}
                             min={0}
+                            step={"any"}
                             required
                         />
                     </div>

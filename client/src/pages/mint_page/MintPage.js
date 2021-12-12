@@ -82,6 +82,8 @@ function MintPage() {
                         <Box height="20" />
                         <p className="sub-text">{mintState.collection.metadata.description}</p>
                     </div>
+                    <Box width="50" />
+
                 </div>
             </div>
             <div className="listing-details">

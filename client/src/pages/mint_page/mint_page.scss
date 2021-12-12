@@ -12,7 +12,8 @@
         justify-content: flex-start;
 
         .image-box {
-            border-radius: 10px;
+        aspect-ratio: 1/1;
+        border-radius: 10px;
             height: 100px;
             width: 100px
         }

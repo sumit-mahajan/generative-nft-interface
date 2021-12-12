@@ -6,6 +6,7 @@ import CollectionPage from "./pages/collection_page/CollectionPage";
 import MintPage from "./pages/mint_page/MintPage";
 import Navbar from "./components/navbar/Navbar";
 import SuccessPage from "./pages/success_page/SuccessPage";
+import DocPage from "./pages/doc_page/DocPage";
 
 function App() {
   const { connectionState } = useConnection();
@@ -28,7 +29,8 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<GeneratePage />} />
+          <Route path="/" element={<DocPage />} />
+          <Route path="/generate" element={<GeneratePage />} />
           <Route path="/collection" element={<CollectionPage />} />
           <Route path="/mint" element={<MintPage />} />
           <Route path="/success" element={<SuccessPage />} />

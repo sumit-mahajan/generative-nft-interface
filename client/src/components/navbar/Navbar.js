@@ -12,7 +12,7 @@ function Navbar() {
 
     return (
         <nav className="no-select">
-            <div onClick={() => { navigate('/') }} className="logo">Mint.it</div>
+            <div onClick={() => { navigate('/') }} className="logo">MINTIT</div>
 
             <div className="nav-btn-flex">
                 <Chip content={networkName} />

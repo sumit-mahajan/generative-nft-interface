@@ -451,7 +451,7 @@
   "sourceMap": "60:353:15:-:0;;;237:51;;;;;;;;;-1:-1:-1;262:5:15;:18;;-1:-1:-1;;;;;;262:18:15;270:10;262:18;;;60:353;;;;;;",
   "deployedSourceMap": "60:353:15:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;114:39;;;;;;;;;160:25:17;;;148:2;133:18;114:39:15;;;;;;;;87:20;;;;;-1:-1:-1;;;;;87:20:15;;;;;;-1:-1:-1;;;;;360:32:17;;;342:51;;330:2;315:18;87:20:15;196:203:17;296:114:15;;;;;;:::i;:::-;;:::i;:::-;;;213:5;;-1:-1:-1;;;;;213:5:15;199:10;:19;195:26;;;366:24:::1;:36:::0;;;195:26;296:114;:::o;404:180:17:-;463:6;516:2;504:9;495:7;491:23;487:32;484:52;;;532:1;529;522:12;484:52;-1:-1:-1;555:23:17;;404:180;-1:-1:-1;404:180:17:o",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.6;\r\n\r\ncontract Migrations {\r\n    address public owner;\r\n    uint256 public last_completed_migration;\r\n\r\n    modifier restricted() {\r\n        if (msg.sender == owner) _;\r\n    }\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    function setCompleted(uint256 completed) public restricted {\r\n        last_completed_migration = completed;\r\n    }\r\n}\r\n",
-  "sourcePath": "C:\\Users\\AKASH\\Desktop\\AK\\DEVfolio\\NFT-Generative-Final\\contracts\\Migrations.sol",
+  "sourcePath": "F:\\ethdev\\generative-nft\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
@@ -1258,12 +1258,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x6162A2EE004491B5b5E84A1b8E08345eD6695266",
-      "transactionHash": "0xef5f4f3dc6e35e546b464d74679eaccad519225492c494952ac614783dc8f97d"
+      "address": "0x124a67350415d91B0a609D5010D01ec47E945b86",
+      "transactionHash": "0x9696446ce6f90d1565e8393de35967bcac32c63fd48ac2abe580d6273dd3e8c4"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-12T12:52:20.353Z",
+  "updatedAt": "2021-12-12T13:57:34.016Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

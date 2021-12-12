@@ -75,8 +75,8 @@ export function ConnectionProvider(props) {
         // Mumbai
         const newInstance = new web3.eth.Contract(
           Marketplace.abi,
-          "0x0BbE047979B7587213eebda55f98ec721Ce9E723"
-          // "0x50DA615718BF02C977992dF52a4c8895681e8886" OLD
+          // "0x0BbE047979B7587213eebda55f98ec721Ce9E723"
+          "0x50DA615718BF02C977992dF52a4c8895681e8886" // old
           // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
         );
 

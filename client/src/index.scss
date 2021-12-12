@@ -47,6 +47,7 @@
   box-sizing: border-box;
   scroll-behavior: smooth;
 
+  // letter-spacing: 1.5px;
   font-size: var(--text-size);
   font-weight: 400;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto";
@@ -92,9 +93,6 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-*::selection {
-  background: var(--primary);
-}
 
 .no-select {
   user-select: none !important;
@@ -115,6 +113,10 @@ h1 {
 h2 {
   font-size: var(--sm-text-size);
   font-weight: 200;
+}
+
+.sub-text {
+  font-size: var(--sm-text-size);
 }
 
 span {
@@ -177,6 +179,11 @@ button {
   }
 }
 
+.error-field {
+  font-size: var(--sm-text-size);
+  color: red;
+}
+
 .row-flex {
   width: 100%;
   display: flex;
@@ -186,7 +193,7 @@ button {
 
 .nft-grid {
   display: grid;
-  grid-template-columns: repeat(4,24%);
+  grid-template-columns: repeat(5,18.5%);
   grid-row-gap: 30px;
   grid-column-gap: 20px;
 

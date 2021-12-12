@@ -21,7 +21,9 @@ export function GenerateProvider(props) {
         height: 512,
         outputSize: 0,
         properties: [],
+        isLoading: false,
         isDone: false,
+        time: 0,
         error: "",
     });
 
@@ -36,13 +38,13 @@ export function GenerateProvider(props) {
 
             let nValues = 0;
             for await (let [filename, fileHandle] of properties.at(-1).subDirHandle) {
-                const info = filename.slice(0, -4).split("#")
+                const name = filename.slice(0, -4)
                 properties.at(-1).values.push({
                     id: nValues,
-                    name: info[0],
+                    name,
                     filename,
                     fileHandle,
-                    weight: parseInt(info[1] || 1),
+                    weight: 1,
                 })
                 nValues++;
             }
@@ -95,6 +97,7 @@ export function GenerateProvider(props) {
 
     const createImages = async () => {
         let startTime = Date.now()
+        setConfigState({ ...configState, error: '', isLoading: true })
 
         if (configState.outputDirHandle !== null) {
             // Clear old output images and metadata
@@ -216,7 +219,7 @@ export function GenerateProvider(props) {
             count++
 
             if (count.toString() === configState.outputSize.toString()) {
-                setConfigState({ ...configState, isDone: true })
+                setConfigState({ ...configState, isDone: true, isLoading: false, time: (Date.now() - startTime) / 1000 })
                 setMintState({ ...mintState, nfts })
                 console.log("Took ", (Date.now() - startTime) / 1000, " seconds to generate")
             }

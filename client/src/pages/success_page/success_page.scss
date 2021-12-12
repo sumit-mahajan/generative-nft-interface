@@ -1,0 +1,15 @@
+.success-parent {
+    height: calc(100vh - 70px);
+}
+
+.success-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .link {
+        font-size: var(--text-size);
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}

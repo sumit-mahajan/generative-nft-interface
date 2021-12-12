@@ -42,6 +42,14 @@
     animation-delay: 666ms;
 }
 
+.load-msg {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    transform: translate(-50%, -50%);
+
+}
+
 @keyframes load-anim {
     0%{
         transform: scale(1);

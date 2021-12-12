@@ -12,8 +12,8 @@ function GeneratePage() {
   const { web3, accounts, mContract, errors } = connectionState;
 
   const { configState, setConfigState, setInputDir, setOutputDir, createImages } = useGenerate();
-  const [isLoading, setLoading] = useState(false)
 
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const [dragId, setDragId] = useState();
 
   const handleDrag = (ev) => {
@@ -51,13 +51,13 @@ function GeneratePage() {
     setConfigState({ ...configState, properties });
   };
 
-  // if (!web3 || accounts.length === 0 || errors) {
-  //   return errors;
-  // }
-
   return (
     <div className="container">
-      {isLoading ? <Loading /> : <div></div>}
+      {configState.isLoading ?
+        <Loading message={
+          configState.isDone ? "Uploading images and metadata to IPFS"
+            : "Generating " + configState.outputSize + " unique images"
+        } /> : <div></div>}
 
       <Box height="30" />
 
@@ -104,25 +104,59 @@ function GeneratePage() {
 
           <Box height="30" />
 
-          {configState.properties.slice().reverse().map(property =>
-            <div
-              className="draggable"
-              key={property.name}
-              id={property.id}
-              draggable="true"
-              onDragOver={(ev) => ev.preventDefault()}
-              onDragStart={handleDrag}
-              onDrop={handleDrop}
-            >
-              <div className="draggable-icon">
-                <div className="d"></div>
-                <div className="d"></div>
+          {configState.properties.slice().reverse().map((property, index) =>
+            <div className="draggable">
+
+              <div
+                className="draggable-strip"
+                key={property.name}
+                id={property.id}
+                draggable="true"
+                onDragOver={(ev) => ev.preventDefault()}
+                onDragStart={handleDrag}
+                onDrop={handleDrop}
+              >
+                <div className="draggable-icon">
+                  <div className="d"></div>
+                  <div className="d"></div>
+                </div>
+                <Box width="40" />
+                <p>{property.name}</p>
+                <p className="rarity-btn" onClick={() => {
+                  if (selectedIndex === index) {
+                    setSelectedIndex(-1)
+                  } else {
+                    setSelectedIndex(index)
+                  }
+                }}>
+                  {property.values.length} values
+                </p>
               </div>
-              <Box width="40" />
-              <p>{property.name}</p>
-              <p className="rarity-btn">{property.values.length} values</p>
-              {/* {property.values.map(file => <p>Value: {file.name}, Rarity: {file.weight}%</p>)}
-          <br /> */}
+
+              {index === selectedIndex ?
+
+                <div><Box height="15" />
+                  {property.values.map((_value, vIndex) =>
+                    <div className="values-parent">
+                      {vIndex === 0 ? <div style={{ marginBottom: "10px" }} className="value-flex"><p>Value</p><p>Weight</p></div> : <div></div>}
+                      <div className="value-flex">
+                        <p className="value">{_value.name}</p>
+                        <input
+                          className="underlined-field"
+                          type="text"
+                          placeholder="weight"
+                          onChange={(e) => {
+                            let temp = configState.properties;
+                            temp[index].values[vIndex].weight = parseInt(e.target.value || 1)
+                            setConfigState({ ...configState, properties: temp })
+                          }}
+                          defaultValue={_value.weight}
+                        />
+                      </div>
+                    </div>
+                  )} </div>
+                : <div></div>
+              }
             </div>
           )}
 
@@ -135,82 +169,89 @@ function GeneratePage() {
 
           <Box height="30" />
 
-          <div className="textfield">
-            <label>Name Prefix *</label>
-            <input
-              onChange={(e) => { setConfigState({ ...configState, namePrefix: e.target.value }) }}
-              type="text" placeholder='Your NFTs will be named as "<name_prefix>  #<token_id>" e.g. Cryptopunk #1' />
-          </div>
-
-          <Box height="30" />
-
-          <div className="textfield">
-            <label>Description *</label>
-            <input
-              onChange={(e) => { setConfigState({ ...configState, commonDescription: e.target.value }) }}
-              type="text" placeholder='Every NFT of your collection will have this description' />
-          </div>
-
-          <Box height="30" />
-
-          <div className="row-flex">
-            <div className="textfield">
-              <label>Height in Pixels *</label>
-              <input
-                onChange={(e) => { setConfigState({ ...configState, height: e.target.value }) }}
-                type="number" placeholder='Enter height in pixels of your exported layers' />
-            </div>
-
-            <Box width="40" />
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            createImages()
+          }}>
 
             <div className="textfield">
-              <label>Width in Pixels *</label>
+              <label>Name Prefix *</label>
               <input
-                onChange={(e) => { setConfigState({ ...configState, width: e.target.value }) }}
-                type="number" placeholder='Enter width in pixels of your exported layers' />
+                onChange={(e) => { setConfigState({ ...configState, namePrefix: e.target.value }) }}
+                type="text" placeholder='Your NFTs will be named as "<name_prefix>  #<token_id>" e.g. Cryptopunk #1'
+                required />
             </div>
-          </div>
 
-          <Box height="30" />
+            <Box height="30" />
 
-          <div className="row-flex">
             <div className="textfield">
-              <label>Number of NFTs *</label>
+              <label>Description *</label>
               <input
-                value={configState.outputSize}
-                onChange={(e) => { setConfigState({ ...configState, outputSize: e.target.value }) }}
-                type="number" placeholder='Enter number of NFTs you want to generate' />
+                onChange={(e) => { setConfigState({ ...configState, commonDescription: e.target.value }) }}
+                type="text" placeholder='Every NFT of your collection will have this description'
+                required />
             </div>
 
-            <Box width="40" />
+            <Box height="30" />
 
-            <div className="dir-flex">
-              <p>Select Output Directory<span> ( optional )</span></p>
-              <div className="select-flex">
-                <p>{configState.outputDirHandle !== null ? "output" : "no folder selected"}</p>
-                <Box width="30" />
-                <Chip onClick={setOutputDir} content={configState.outputDirHandle !== null ? "change" : "select"} />
+            <div className="row-flex">
+              <div className="textfield">
+                <label>Height in Pixels *</label>
+                <input
+                  onChange={(e) => { setConfigState({ ...configState, height: e.target.value }) }}
+                  type="number" placeholder='Enter height in pixels of your exported layers'
+                  min={1}
+                  required />
+              </div>
+
+              <Box width="40" />
+
+              <div className="textfield">
+                <label>Width in Pixels *</label>
+                <input
+                  onChange={(e) => { setConfigState({ ...configState, width: e.target.value }) }}
+                  type="number" placeholder='Enter width in pixels of your exported layers'
+                  min={1} required />
               </div>
             </div>
-          </div>
 
-          <Box height="50" />
+            <Box height="30" />
 
-          <div className="center-child">
-            <button onClick={async () => {
-              setConfigState({ ...configState, error: '' })
-              setLoading(true)
-              console.log(isLoading)
+            <div className="row-flex">
+              <div className="textfield">
+                <label>Number of NFTs *</label>
+                <input
+                  onChange={(e) => { setConfigState({ ...configState, outputSize: e.target.value }) }}
+                  type="number" placeholder='Enter number of NFTs you want to generate'
+                  max={1000}
+                  min={1}
+                  required
+                />
+              </div>
 
-              await createImages()
+              <Box width="40" />
 
-              setLoading(false)
-            }}>
-              Generate Images
-            </button>
-            <Box height="10" />
-            <p>{configState.error}</p>
-          </div>
+              <div className="dir-flex">
+                <p>Select Output Directory<span> ( optional )</span></p>
+                <div className="select-flex">
+                  <p>{configState.outputDirHandle !== null ? "output" : "no folder selected"}</p>
+                  <Box width="30" />
+                  <Chip onClick={setOutputDir} content={configState.outputDirHandle !== null ? "change" : "select"} />
+                </div>
+              </div>
+            </div>
+
+            <Box height="50" />
+
+            <div className="center-child">
+              <button>
+                Generate Images
+              </button>
+              <Box height="10" />
+              <p className="error-field">{configState.error}</p>
+            </div>
+
+          </form>
 
 
         </div> : <div></div>}

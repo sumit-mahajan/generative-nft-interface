@@ -1,0 +1,29 @@
+.info-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.collection-details {
+    width: 50%;
+
+    .info-box {
+        display: flex;
+        justify-content: flex-start;
+
+        .image-box {
+            border-radius: 10px;
+            height: 100px;
+            width: 100px
+        }
+
+        .describe-box {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+.listing-details {
+    width: 50%;
+}

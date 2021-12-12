@@ -216,8 +216,8 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         // Tranfer eth to creator as royalty
         creator.transfer(((nft.price * nft.royalty) / 100));
 
-        // Marketplace gets 1% commission
-        marketPlaceAddress.transfer(nft.price / 100);
+        // Marketplace gets 0% commission
+        // marketPlaceAddress.transfer(nft.price / 100);
 
         // Tranfer remaining eth to current owner
         payable(ownerOf(tokenId)).transfer(
@@ -312,8 +312,8 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         // Tranfer eth to creator as royalty
         creator.transfer(((bids[tokenId][to_] * nfts[tokenId].royalty) / 100));
 
-        // Marketplace gets 1% commission
-        marketPlaceAddress.transfer(bids[tokenId][to_] / 100);
+        // Marketplace gets 0% commission
+        // marketPlaceAddress.transfer(bids[tokenId][to_] / 100);
 
         // Tranfer remaining eth to current owner
         payable(ownerOf(tokenId)).transfer(
@@ -401,50 +401,29 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         // }
     }
 
-    // // struct for entire collection data
-    // struct Collection {
-    //     address cAddress;
-    //     string name;
-    //     string symbol;
-    //     string metadataURI;
-    //     address creator;
-    // }
-
-    // // Get collection overview
-    // function getCollectionOverview() public view returns (Collection memory) {
-    //     return
-    //         Collection(
-    //             address(this),
-    //             name(),
-    //             symbol(),
-    //             collectionMetadataURI,
-    //             creator
-    //         );
-    // }
-
-    // // Get NFT Overview
-    // function getNFTOverview(uint256 tokenId_)
-    //     public
-    //     view
-    //     returns (
-    //         address cAddress,
-    //         uint256 tokenId,
-    //         address owner,
-    //         string memory metadataURI,
-    //         NFT memory
-    //     )
-    // {
-    //     require(
-    //         tokenId_ <= _tokenIds.current(),
-    //         "CustomCollection : sellBiddingNFT -> tokenId doesn't correspond to any NFT"
-    //     );
-
-    //     return (
-    //         address(this),
-    //         tokenId_,
-    //         ownerOf(tokenId_),
-    //         tokenURI(tokenId_),
-    //         nfts[tokenId_]
-    //     );
-    // }
+    function mintBatch(
+        string[] memory names,
+        string[] memory images,
+        string[] memory properties,
+        string[] memory metadatas,
+        bool forSale_,
+        bool isFixedPrice_,
+        uint256 price_,
+        uint256 royalty_,
+        uint256 nItems
+    ) public {
+        for (uint256 i = 0; i < nItems; i++) {
+            mintNFT(
+                names[i],
+                images[i],
+                properties[i],
+                metadatas[i],
+                forSale_,
+                isFixedPrice_,
+                price_,
+                royalty_,
+                "Never gonna give you up, Never gonna let you down"
+            );
+        }
+    }
 }

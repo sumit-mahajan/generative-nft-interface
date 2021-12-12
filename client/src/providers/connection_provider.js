@@ -39,7 +39,7 @@ export function ConnectionProvider(props) {
         ...connectionState,
         web3,
         mContract,
-        networkName: isTest ? "Localhost" : "Mumbai",
+        networkName: isTest ? "Localhost 7545" : "Mumbai Testnet",
       });
     } catch (e) {
       console.log("useConnection Error ", e);
@@ -75,7 +75,8 @@ export function ConnectionProvider(props) {
         // Mumbai
         const newInstance = new web3.eth.Contract(
           Marketplace.abi,
-          "0x50DA615718BF02C977992dF52a4c8895681e8886"
+          "0xFAcAB140C715bbB3BeC75e3Bde5024dB2B87998C"
+          // "0x50DA615718BF02C977992dF52a4c8895681e8886" OLD
           // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
         );
 
@@ -92,7 +93,7 @@ export function ConnectionProvider(props) {
   }
 
   useEffect(() => {
-    // initiate();
+    initiate();
     connectWallet();
 
     // Detect metamask account change

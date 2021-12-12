@@ -14,11 +14,9 @@ function Loading(props) {
                 <div className="load load2"></div>
                 <Box width="20" />
                 <div className="load load3"></div>
-                {/* {props.page} */}
+                <Box height="70" />
             </div>
-            <Box height="80" />
-            {/* {props.tx && connectionState.networkName === "Rinkeby" &&
-                "Please wait. Transactions on Rinkeby might take about 15-20 seconds"} */}
+            <div className="load-msg">{props.message}</div>
         </div>
     );
 }

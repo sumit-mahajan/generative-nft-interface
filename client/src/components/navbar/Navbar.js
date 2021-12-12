@@ -12,10 +12,10 @@ function Navbar() {
 
     return (
         <nav className="no-select">
-            <div onClick={() => { navigate('/') }} className="logo">caya</div>
+            <div onClick={() => { navigate('/') }} className="logo">Mint.it</div>
 
             <div className="nav-btn-flex">
-                <Chip content={networkName.toLowerCase()} />
+                <Chip content={networkName} />
 
                 <Box width="20" />
 
@@ -25,7 +25,7 @@ function Navbar() {
                     /> :
                     <BorderButton
                         onClick={connectWallet}
-                        content="connect"
+                        content="Connect"
                     />
                 }
 

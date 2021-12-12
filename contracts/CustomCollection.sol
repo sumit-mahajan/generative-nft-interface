@@ -6,22 +6,24 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Marketplace.sol";
 
+// NFTs can be listed for fixed price or bidding
 enum SellType {
     FixedPrice,
     Bidding
 }
 
 contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
-    // Maintaining a counter of no of nfts in collection
+    // Maintaining a counter of number of nfts in collection
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
     // Store collection owner/creator
     address payable public creator;
 
-    // Store collection Metadata
+    // Store collection Metadata URI
     string collectionMetadataURI;
 
+    // Store Marketplace address
     address payable marketPlaceAddress;
 
     // On Collection creation
@@ -41,9 +43,11 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
     // ** NFT ** //
 
     // Required NFT data in contract
+    // Other constant data is accessed from event logs by subgraph
     struct NFT {
         bool forSale;
         SellType sellType;
+        // incase of bidding type NFT price indicates minimum bid
         uint256 price;
         uint256 royalty;
     }
@@ -88,7 +92,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
     // On bid canceled
     event BidCanceled(address cAddress, uint256 tokenId, address from);
 
-    // Checks if tokenId exists
+    // Checks if NFT with given tokenId exists
     modifier tokenExists(uint256 tokenId) {
         require(
             tokenId <= _tokenIds.current(),
@@ -99,7 +103,6 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
 
     // Checks if owner of tokenId is caller
     modifier callerIsNftOwner(uint256 tokenId) {
-        // Only owner of token can access secret
         require(
             msg.sender == ownerOf(tokenId),
             "CustomCollection -> Caller is not nft owner"
@@ -109,7 +112,6 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
 
     // Checks if owner of tokenId is not caller
     modifier callerIsNotNftOwner(uint256 tokenId) {
-        // Only owner of token can access secret
         require(
             msg.sender != ownerOf(tokenId),
             "CustomCollection -> Caller is nft owner"
@@ -117,7 +119,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         _;
     }
 
-    // Checks if NFT is listed for bids
+    // Checks if NFT is listed as open for bids
     modifier isBiddable(uint256 tokenId) {
         require(
             nfts[tokenId].sellType == SellType.Bidding,
@@ -138,6 +140,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         uint256 royalty_,
         string memory unlockableString_
     ) public {
+        // Only collection owner can mint NFTs
         require(
             msg.sender == creator,
             "CustomCollection : mintToken -> Not collection owner"
@@ -190,7 +193,35 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         );
     }
 
+    // For minting multiple NFTs in batch
+    function mintBatch(
+        string[] memory names,
+        string[] memory images,
+        string[] memory properties,
+        string[] memory metadatas,
+        bool forSale_,
+        bool isFixedPrice_,
+        uint256 price_,
+        uint256 royalty_,
+        uint256 nItems
+    ) public {
+        for (uint256 i = 0; i < nItems; i++) {
+            mintNFT(
+                names[i],
+                images[i],
+                properties[i],
+                metadatas[i],
+                forSale_,
+                isFixedPrice_,
+                price_,
+                royalty_,
+                "Never gonna give you up, Never gonna let you down"
+            );
+        }
+    }
+
     // Buy Fixed Price NFT
+    // NonReentrant modifier is used to prevent any Re-Entrancy hacks
     function buyFixedPriceNFT(uint256 tokenId)
         public
         payable
@@ -213,15 +244,12 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
             "CustomCollection : buyFixedPriceNFT -> Please send exact amount as price"
         );
 
-        // Tranfer eth to creator as royalty
+        // Tranfer funds to creator as royalty
         creator.transfer(((nft.price * nft.royalty) / 100));
 
-        // Marketplace gets 0% commission
-        // marketPlaceAddress.transfer(nft.price / 100);
-
-        // Tranfer remaining eth to current owner
+        // Tranfer remaining funds to current owner
         payable(ownerOf(tokenId)).transfer(
-            (nft.price * (100 - nft.royalty - 1)) / 100
+            (nft.price * (100 - nft.royalty)) / 100
         );
 
         // Transfer nft to msg.sender
@@ -232,10 +260,12 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
             tokenId
         );
 
-        // New owner has to approve marketplace to manage his token
+        // New owner has to approve marketplace to manage their token
         approve(marketPlaceAddress, tokenId);
 
-        // Unlist item
+        // After buying the NFT is by default
+        // unlisted from sale
+        // To list for sale call modifyListingMechanism
         nfts[tokenId].forSale = false;
 
         // Log event to subgraph
@@ -249,7 +279,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         );
     }
 
-    // Places bid. Recieves eth from user which are held by the contract
+    // Places bid. Recieves funds from user which are held by the contract
     function placeBid(uint256 tokenId)
         public
         payable
@@ -273,7 +303,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         emit BidPlaced(address(this), tokenId, msg.sender, msg.value / 1e12);
     }
 
-    // Cancels bid
+    // Cancels bid by sender on item with tokenId
     function cancelBid(uint256 tokenId)
         public
         tokenExists(tokenId)
@@ -289,7 +319,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         // Remove bid on chain
         bids[tokenId][msg.sender] = 0;
 
-        // Transfer bidder's eth back
+        // Transfer bidder's funds back
         payable(msg.sender).transfer(bidAmount);
 
         // Log event to subgraph
@@ -297,6 +327,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
     }
 
     // Sell NFT to a bidder
+    // NonReentrant modifier is used to prevent any Re-Entrancy hacks
     function sellBiddingNFT(uint256 tokenId, address to_)
         public
         nonReentrant
@@ -309,15 +340,12 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
             "CustomCollection -> No bid by user 'to_'"
         );
 
-        // Tranfer eth to creator as royalty
+        // Tranfer funds to creator as royalty
         creator.transfer(((bids[tokenId][to_] * nfts[tokenId].royalty) / 100));
 
-        // Marketplace gets 0% commission
-        // marketPlaceAddress.transfer(bids[tokenId][to_] / 100);
-
-        // Tranfer remaining eth to current owner
+        // Tranfer remaining funds to current owner
         payable(ownerOf(tokenId)).transfer(
-            (bids[tokenId][to_] * (100 - nfts[tokenId].royalty - 1)) / 100
+            (bids[tokenId][to_] * (100 - nfts[tokenId].royalty)) / 100
         );
 
         // Transfer nft to msg.sender
@@ -371,7 +399,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
                 nfts[tokenId].price = newPrice;
             }
         }
-        // For bidding tokens
+        // For bidding tokens (Not Safe)
         // else {
         //     if(setFixPrice) {
         //         // Convert to fixed price and change price, forSale
@@ -399,31 +427,5 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
         //         nfts[tokenId].price = newPrice;
         //     }
         // }
-    }
-
-    function mintBatch(
-        string[] memory names,
-        string[] memory images,
-        string[] memory properties,
-        string[] memory metadatas,
-        bool forSale_,
-        bool isFixedPrice_,
-        uint256 price_,
-        uint256 royalty_,
-        uint256 nItems
-    ) public {
-        for (uint256 i = 0; i < nItems; i++) {
-            mintNFT(
-                names[i],
-                images[i],
-                properties[i],
-                metadatas[i],
-                forSale_,
-                isFixedPrice_,
-                price_,
-                royalty_,
-                "Never gonna give you up, Never gonna let you down"
-            );
-        }
     }
 }

@@ -6,7 +6,7 @@ import "./CustomCollection.sol";
 contract Marketplace {
     // ** User ** //
 
-    // // To store user
+    // // To store user data
     // struct User {
     //     string name;
     //     string image;
@@ -14,10 +14,10 @@ contract Marketplace {
     //     string websiteUrl;
     // }
 
-    // // To store users (address => string)
+    // // To store users (address => User)
     // mapping(address => User) public users;
 
-    // On user creation
+    // On user creation/updation
     event UserCreated(
         address uAddress,
         string name,
@@ -33,8 +33,8 @@ contract Marketplace {
         string memory twitterUrl_,
         string memory websiteUrl_
     ) public {
-        // Map User to address
-        // users[msg.sender] = User(name_, metadata_);
+        // Map address to User
+        // users[msg.sender] = User(name_, image_, twitterUrl_, websiteUrl_);
 
         // Log event to subgraph
         emit UserCreated(msg.sender, name_, image_, twitterUrl_, websiteUrl_);
@@ -59,6 +59,7 @@ contract Marketplace {
         string memory metadata_
     ) public {
         address cAddress = address(
+            // Deploy new collection contract
             new CustomCollection(name_, symbol_, metadata_, msg.sender)
         );
 
@@ -67,6 +68,7 @@ contract Marketplace {
     }
 
     // To buy fixed price nfts
+    // CustomCollection - buyFixedPriceNft() calls this function
     function marketPlaceTransferFrom(
         address cAddress,
         address nftOwner,
@@ -86,7 +88,8 @@ contract Marketplace {
         );
     }
 
-    // To receive ether
-    // Function to receive Ether. msg.data must be empty
+    // Function to receive funds. 
+    // Called when transfer is executed on this contract address
+    // msg.data must be empty 
     receive() external payable {}
 }

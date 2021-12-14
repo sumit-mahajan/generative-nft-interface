@@ -100,7 +100,7 @@ function DocPage() {
 
             <div className="center-child">
                 <button onClick={() => { navigate('/generate') }}
-                    type="submit" >Let's Rock</button>
+                    type="submit" >Let's Mint</button>
             </div>
 
             <Box height="50" />

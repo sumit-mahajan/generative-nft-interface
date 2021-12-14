@@ -10,7 +10,7 @@ function LandingPage() {
 
     return (
         <div className="container">
-            <Box height="70" />
+            <Box height="50" />
 
             <h1>Randomly generate multiple NFTs in 4 easy steps</h1>
 
@@ -18,6 +18,8 @@ function LandingPage() {
 
             <div className="landing-flex">
                 <div className="intro">
+                    <h2>PROMINENT FEATURES</h2>
+                    <Box height="30" />
                     <ul>
                         <li>Randomly generate a collection of upto 100 NFTs from your base layers</li>
                         <Box height="10" />
@@ -37,8 +39,6 @@ function LandingPage() {
 
                 <img className="illustration" src="/images/illustration.svg" alt="Illustration" />
             </div>
-
-
         </div>
     );
 }

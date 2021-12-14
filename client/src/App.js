@@ -15,6 +15,12 @@ function App() {
 
   const { errors } = connectionState;
 
+  if (errors) {
+    return (
+      <div className="backdrop">{errors}</div>
+    );
+  }
+
   return (
     <div>
       <Router>

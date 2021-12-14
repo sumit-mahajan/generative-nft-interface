@@ -21,98 +21,34 @@ export function ConnectionProvider(props) {
     errors: null,
   });
 
-  const initiate = async () => {
-    if (connectionState.web3) return;
+  // const initiate = async () => {
+  //   if (connectionState.web3) return;
 
-    try {
-      // Use local web3 object by default before user connects metamask
-      const provider = new Web3.providers.HttpProvider(
-        isTest ?
-          "http://127.0.0.1:7545" :
-          "https://rpc-mumbai.maticvigil.com"
-      );
-      const web3 = new Web3(provider);
+  //   try {
+  //     // Use local web3 object by default before user connects metamask
+  //     const provider = new Web3.providers.HttpProvider(
+  //       isTest ?
+  //         "http://127.0.0.1:7545" :
+  //         "https://rpc-mumbai.maticvigil.com"
+  //     );
+  //     const web3 = new Web3(provider);
 
-      const mContract = await createMarketplaceInstance(web3);
+  //     const mContract = await createMarketplaceInstance(web3);
 
-      setConnectionState({
-        ...connectionState,
-        web3,
-        mContract,
-        networkName: isTest ? "Localhost 7545" : "Mumbai Testnet",
-      });
-    } catch (e) {
-      console.log("useConnection Error ", e);
-      if (e !== "Use Correct Network") {
-        e = "Can't connect to Mumbai testnet right now. Try again after some time"
-      } else {
-        e = "You are using wrong network. Switch to " + isTest ? "Localhost 7545" : "Mumbai Testnet";
-      }
-
-      setConnectionState({ ...connectionState, errors: e });
-    }
-  };
-
-  async function createMarketplaceInstance(web3) {
-    if (web3) {
-      const networkId = await web3.eth.net.getId();
-      console.log("IsTest: ", isTest);
-      if (isTest) {
-        // Localhost 7545
-        const deployedNetwork = Marketplace.networks[networkId];
-
-        if (deployedNetwork) {
-          const newInstance = new web3.eth.Contract(
-            Marketplace.abi,
-            deployedNetwork.address
-          );
-
-          return newInstance;
-        } else {
-          throw "Use Correct Network";
-        }
-      } else {
-        // Mumbai
-        const newInstance = new web3.eth.Contract(
-          Marketplace.abi,
-          // "0x0BbE047979B7587213eebda55f98ec721Ce9E723"
-          "0x16260105f1cC8bb5CcE7A39C62758AAcd3a8ab7C" // Only generative
-          // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
-        );
-
-        return newInstance;
-      }
-    }
-  }
-
-  async function createCollectionInstance(web3, cAddress) {
-    return await new web3.eth.Contract(
-      CustomCollection.abi,
-      cAddress
-    );
-  }
-
-  useEffect(() => {
-    initiate();
-    connectWallet();
-
-    // Detect metamask account change
-    window.ethereum.on("accountsChanged", async function (_accounts) {
-      const web3 = await getWeb3();
-      const mContract = await createMarketplaceInstance(web3);
-      setConnectionState({
-        ...connectionState,
-        web3,
-        accounts: _accounts,
-        mContract,
-      });
-    });
-
-    // Detect metamask network change
-    window.ethereum.on("networkChanged", function (networkId) {
-      window.location.reload();
-    });
-  }, []);
+  //     setConnectionState({
+  //       ...connectionState,
+  //       web3,
+  //       mContract,
+  //       networkName: isTest ? "Localhost 7545" : "Mumbai Testnet",
+  //     });
+  //   } catch (e) {
+  //     console.log("useConnection : initiate -> Error ", e);
+  //     if (e === "WN") {
+  //       e = "You are using wrong network. Switch to " + isTest ? "Localhost 7545" : "Mumbai Testnet";
+  //     }
+  //     setConnectionState({ ...connectionState, errors: e });
+  //   }
+  // };
 
   const connectWallet = async () => {
     try {
@@ -156,21 +92,80 @@ export function ConnectionProvider(props) {
         mContract,
       });
     } catch (e) {
-      if (e === "Use Correct Network") {
+      console.log("useConnection : connectWallet -> Error ", e);
+      if (e === "WN") {
         e = "You are using wrong network. Switch to " + (isTest ? "Localhost 7545" : "Mumabi Testnet");
       }
-      console.log("useConnection Error ", e);
       setConnectionState({ ...connectionState, errors: e });
     }
   };
 
-  // Method for switching accounts programmatically
-  const switchNetwork = async () => {
-    // await window.ethereum.request({
-    //     method: 'wallet_switchEthereumChain',
-    //     params: [{ chainId: 1337 }],
-    // });
-  };
+  async function createMarketplaceInstance(web3) {
+    if (web3) {
+      const networkId = await web3.eth.net.getId();
+      console.log("IsTest: ", isTest);
+      if (isTest) {
+        // Localhost 7545
+        if (networkId !== 5777) {
+          throw "WN";
+        }
+        const deployedNetwork = Marketplace.networks[networkId];
+
+        if (deployedNetwork) {
+          const newInstance = new web3.eth.Contract(
+            Marketplace.abi,
+            deployedNetwork.address
+          );
+
+          return newInstance;
+        } else {
+          throw "Contract not depoyed on localhost";
+        }
+      } else {
+        // Mumbai
+        if (networkId !== 80001) {
+          throw "WN";
+        }
+        const newInstance = new web3.eth.Contract(
+          Marketplace.abi,
+          // "0x0BbE047979B7587213eebda55f98ec721Ce9E723"
+          "0x16260105f1cC8bb5CcE7A39C62758AAcd3a8ab7C" // Only generative
+          // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
+        );
+
+        return newInstance;
+      }
+    }
+  }
+
+  async function createCollectionInstance(web3, cAddress) {
+    return await new web3.eth.Contract(
+      CustomCollection.abi,
+      cAddress
+    );
+  }
+
+  useEffect(() => {
+    // initiate();
+    connectWallet();
+
+    // Detect metamask account change
+    window.ethereum.on("accountsChanged", async function (_accounts) {
+      const web3 = await getWeb3();
+      const mContract = await createMarketplaceInstance(web3);
+      setConnectionState({
+        ...connectionState,
+        web3,
+        accounts: _accounts,
+        mContract,
+      });
+    });
+
+    // Detect metamask network change
+    window.ethereum.on("networkChanged", function (networkId) {
+      window.location.reload();
+    });
+  }, []);
 
   return (
     <>

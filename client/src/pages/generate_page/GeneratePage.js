@@ -90,14 +90,7 @@ function GeneratePage() {
 
           <Box width="50" />
 
-          <div className="dir-flex">
-            {/* <p>Select Output Directory<span> ( optional )</span></p>
-          <div className="select-flex">
-            <p>output</p>
-            <Box width="30" />
-            <Chip onClick={setOutputDir} content="select" />
-          </div> */}
-          </div>
+          <div className="dir-flex"></div>
         </div>
 
         <Box height="30" />
@@ -136,7 +129,7 @@ function GeneratePage() {
                     setSelectedIndex(index)
                   }
                 }}>
-                  {property.values.length} values
+                  Adjust Rarity
                 </p>
               </div>
 

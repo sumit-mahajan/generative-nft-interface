@@ -34,6 +34,7 @@ function PreviewPage() {
             setActiveReqs(activeReqs + 1)
 
             const metadataCID = await uploadMetadata(JSON.stringify(nft.metadata))
+            console.log("Metadata ", count + 1, " done")
 
             setActiveReqs(activeReqs - 1)
 

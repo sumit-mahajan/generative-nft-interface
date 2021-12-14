@@ -8,6 +8,7 @@ import Navbar from "./components/navbar/Navbar";
 import SuccessPage from "./pages/success_page/SuccessPage";
 import DocPage from "./pages/doc_page/DocPage";
 import { Box } from "./components/Box";
+import LandingPage from "./pages/landing_page/LandingPage";
 
 function App() {
   const { connectionState } = useConnection();
@@ -20,7 +21,8 @@ function App() {
         {errors && <div style={{ zIndex: "2" }} className="backdrop">{errors}</div>}
         <Navbar />
         <Routes>
-          <Route path="/" element={<DocPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/prerequisites" element={<DocPage />} />
           <Route path="/generate" element={<GeneratePage />} />
           <Route path="/collection" element={<CollectionPage />} />
           <Route path="/mint" element={<MintPage />} />

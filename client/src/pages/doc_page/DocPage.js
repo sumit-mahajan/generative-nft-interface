@@ -8,11 +8,8 @@ function DocPage() {
 
     return (
         <div className="container">
+
             <Box height="30" />
-
-            <h1 style={{ fontWeight: 'bold' }}>Randomly generate multiple NFTs in 4 easy steps</h1>
-
-            <Box height="50" />
 
             <h2>Step 1 / 4</h2>
 
@@ -25,8 +22,7 @@ function DocPage() {
             <p>1. Create design components</p>
             <Box height="30" />
 
-            <p>Build individual components of your artwork that you wish to randomize
-            </p>
+            <p>Build individual components of your artwork that you wish to randomize</p>
             <Box height="10" />
             <p>For example, Create main body structure, backgrounds, accessories etc for your character
                 using a design tool of your choice

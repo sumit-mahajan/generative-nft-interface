@@ -97,7 +97,7 @@ function MintPage() {
                 </p>
                 <Box height="15" />
                 <p className="sub-text">
-                    {mintState.nftData.forSale ? mintState.nftData.isFixedPrice ? "Price: " + mintState.nftData.price : "Minimum Bidding Price: " + parseFloat(BigInt(mintState.nftData.price) / BigInt(1e18)) : ""}
+                    {mintState.nftData.forSale ? mintState.nftData.isFixedPrice ? "Price: " + parseFloat(BigInt(mintState.nftData.price) / BigInt(1e18)) : "Minimum Bidding Price: " + parseFloat(BigInt(mintState.nftData.price) / BigInt(1e18)) : ""} MATIC
                 </p>
                 <Box height="15" />
                 <p className="sub-text">

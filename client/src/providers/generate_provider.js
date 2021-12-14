@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { createCanvas } from "canvas";
 import { uploadImage } from "../services/ipfs_service";
 import { useMint } from './mint_provider'
@@ -17,9 +17,9 @@ export function GenerateProvider(props) {
         outputDirHandle: null,
         namePrefix: "",
         commonDescription: "",
-        width: 512,
-        height: 512,
-        outputSize: 0,
+        width: "",
+        height: "",
+        outputSize: "",
         properties: [],
         isLoading: false,
         isDone: false,

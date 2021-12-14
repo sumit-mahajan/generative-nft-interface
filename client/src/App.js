@@ -7,26 +7,17 @@ import MintPage from "./pages/mint_page/MintPage";
 import Navbar from "./components/navbar/Navbar";
 import SuccessPage from "./pages/success_page/SuccessPage";
 import DocPage from "./pages/doc_page/DocPage";
+import { Box } from "./components/Box";
 
 function App() {
   const { connectionState } = useConnection();
 
-  const { web3, poll, errors } = connectionState;
-
-  // // Mostly due to wrong network
-  // if (errors) {
-  //   console.log(errors);
-  //   return <SwitchNetwork msg={errors} />;
-  // }
-
-  // // Loading animation while webpage loads contract data
-  // if (!web3) {
-  //   return <Loading page="app" />;
-  // }
+  const { errors } = connectionState;
 
   return (
     <div>
       <Router>
+        {errors && <div style={{ zIndex: "2" }} className="backdrop">{errors}</div>}
         <Navbar />
         <Routes>
           <Route path="/" element={<DocPage />} />

@@ -62,8 +62,8 @@ function PreviewPage() {
 
             <div className="nft-grid">
                 {mintState.nfts.sort((a, b) => a.id - b.id).map((nft) =>
-                    <div className="nft-card">
-                        <img src={nft.image} height="100%" width="100%" />
+                    <div key={nft.id} className="nft-card">
+                        <img alt={nft.metadata.name} src={nft.image} height="100%" width="100%" />
                         <p className="caption">{nft.metadata.name}</p>
                     </div>
                 )}

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 function MintPage() {
     const { connectionState, createCollectionInstance } = useConnection()
     const { web3, accounts } = connectionState
-    const { mintState, setMintState } = useMint()
+    const { mintState } = useMint()
 
     const navigate = useNavigate()
     const [isLoading, setLoading] = useState(false)
@@ -74,7 +74,10 @@ function MintPage() {
                 <Box height="20" />
                 <div className="info-box">
                     <div className="image-box">
-                        <img src={mintState.collection.imageUrl} alt="Broken" height={"100%"} width={"100%"} style={{ borderRadius: "10px" }} />
+                        <img alt={mintState.collection.metadata.name}
+                            src={mintState.collection.imageUrl}
+                            height={"100%"} width={"100%"} style={{ borderRadius: "10px" }}
+                        />
                     </div>
                     <Box width="30" />
                     <div className="describe-box">
@@ -111,8 +114,8 @@ function MintPage() {
 
         <div className="nft-grid">
             {mintState.nfts.sort((a, b) => a.id - b.id).map((nft) =>
-                <div className="nft-card">
-                    <img src={nft.image} height="100%" width="100%" />
+                <div key={nft.id} className="nft-card">
+                    <img alt={nft.metadata.name} src={nft.image} height="100%" width="100%" />
                     <p className="caption">{nft.metadata.name}</p>
                 </div>
             )}

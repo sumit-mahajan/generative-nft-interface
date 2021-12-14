@@ -11,8 +11,8 @@ import Loading from "../../components/loading/Loading";
 function CollectionPage() {
     const navigate = useNavigate()
 
-    const { connectionState } = useConnection()
-    const { web3, accounts, mContract, errors } = connectionState;
+    const { connectionState, connectWallet } = useConnection()
+    const { accounts, mContract } = connectionState;
 
     const { mintState, setMintState } = useMint()
 
@@ -119,7 +119,7 @@ function CollectionPage() {
             <div className="image-picker center-child" onClick={triggerInput}>
                 {cImage !== "" ?
                     <img alt="Broken" src={cImage} height="100%" width="100%" style={{ borderRadius: "10px" }} />
-                    : <span>Choose Thumbnail</span>}
+                    : <span>Choose Thumbnail *</span>}
             </div>
             <input id="imgpick" onChange={handleImage} type="file" style={{ visibility: "hidden", height: "30px" }} required />
 
@@ -192,7 +192,7 @@ function CollectionPage() {
                         checked={nftData.forSale}
                     />
                     <Box width="20" />
-                    <label for="forsale">List For Sale</label>
+                    <label>List For Sale</label>
                 </div>
 
                 <Box width="40" />
@@ -207,18 +207,18 @@ function CollectionPage() {
                                 checked={nftData.isFixedPrice}
                             />
                             <Box width="20" />
-                            <label for="fixedprice">Fixed Price </label>
+                            <label>Fixed Price </label>
                         </div>
 
                         <div className="flex-child">
-                            <input type="radio" id="bidding" name="selltype" value="Bidding" checked
+                            <input type="radio" id="bidding" name="selltype" value="Bidding"
                                 onChange={(e) => {
                                     setNftData({ ...nftData, isFixedPrice: !e.target.checked })
                                 }}
                                 checked={!nftData.isFixedPrice}
                             />
                             <Box width="20" />
-                            <label for="bidding">Bidding</label>
+                            <label>Bidding</label>
                         </div>
                     </div> : <div className="flex-child"></div>
                 }
@@ -247,6 +247,9 @@ function CollectionPage() {
                         <input
                             type="number" placeholder={nftData.isFixedPrice ? "Price in MATIC" : "Minimum Bid Price in MATIC"}
                             onChange={(e) => {
+                                if (!e.target.value) {
+                                    return;
+                                }
                                 setNftData({ ...nftData, price: BigInt(parseFloat(e.target.value) * 1e4) * BigInt(1e14) })
                             }}
                             max={1e5}

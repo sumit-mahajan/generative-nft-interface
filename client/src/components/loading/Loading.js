@@ -1,13 +1,11 @@
 import React from 'react';
-import { useConnection } from '../../providers/connection_provider';
 import { Box } from '../Box';
 import './loading.scss'
 
 function Loading(props) {
-    const { connectionState } = useConnection();
 
     return (
-        <div className="loading">
+        <div className="backdrop">
             <div className="loading-container">
                 <div className="load load1"></div>
                 <Box width="20" />

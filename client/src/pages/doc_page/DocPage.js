@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { Box } from "../../components/Box";
 import "./doc_page.scss";
-import { useMint } from "../../providers/mint_provider";
-import { useNavigate } from 'react-router-dom';
 
 function DocPage() {
-    const { mintState, setMintState } = useMint()
     const navigate = useNavigate()
 
     return (
@@ -42,7 +40,7 @@ function DocPage() {
 
             <Box height="30" />
 
-            <img src="/images/layers.png" className="full-image" />
+            <img alt="Layers" src="/images/layers.png" className="full-image" />
 
             <Box height="30" />
             <p>We can see individual layers in bottom right corner</p>
@@ -56,14 +54,14 @@ function DocPage() {
 
             <Box height="30" />
 
-            <img src="/images/export.png" className="full-image" />
+            <img alt="Export" src="/images/export.png" className="full-image" />
 
             <Box height="30" />
             <p>Finally Run the export with following configurations</p>
 
             <Box height="30" />
 
-            <img src="/images/config.png" className="full-image" />
+            <img alt="Config" src="/images/config.png" className="full-image" />
 
             <Box height="30" />
             <p>Make sure all images have same dimensions</p>
@@ -80,7 +78,7 @@ function DocPage() {
 
             <Box height="30" />
 
-            <img src="/images/folder.png" />
+            <img alt="Folder Structure" src="/images/folder.png" />
 
             <Box height="30" />
 

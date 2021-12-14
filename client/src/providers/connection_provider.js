@@ -15,7 +15,7 @@ export function useConnection() {
 export function ConnectionProvider(props) {
   const [connectionState, setConnectionState] = useState({
     web3: null,
-    networkName: isTest ? "Localhost" : "Mumbai",
+    networkName: isTest ? "Localhost 7545" : "Mumbai Testnets",
     accounts: [],
     mContract: null,
     errors: null,
@@ -76,7 +76,7 @@ export function ConnectionProvider(props) {
         const newInstance = new web3.eth.Contract(
           Marketplace.abi,
           // "0x0BbE047979B7587213eebda55f98ec721Ce9E723"
-          "0x50DA615718BF02C977992dF52a4c8895681e8886" // old
+          "0x16260105f1cC8bb5CcE7A39C62758AAcd3a8ab7C" // Only generative
           // process.env.REACT_APP_MUMBAI_CONTRACT_ADDRESS
         );
 

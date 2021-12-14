@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useConnection } from '../../providers/connection_provider';
 import { Box } from '../Box';
 import Chip from '../chip/Chip';
@@ -6,8 +6,8 @@ import './navbar.scss'
 import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
-    const { connectionState, setConnectionState, connectWallet } = useConnection();
-    const { web3, accounts, networkName } = connectionState;
+    const { connectionState, connectWallet } = useConnection();
+    const { accounts, networkName } = connectionState;
     const navigate = useNavigate()
 
     return (
@@ -43,3 +43,4 @@ function BorderButton(props) {
 }
 
 export default Navbar;
+export { BorderButton };

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useConnection } from "../../providers/connection_provider";
+import React, { useState } from "react";
 import { useGenerate } from "../../providers/generate_provider";
 import { Box } from "../../components/Box";
 import Chip from "../../components/chip/Chip";
@@ -8,8 +7,6 @@ import "./generate_page.scss";
 import PreviewPage from "../preview_page/PreviewPage";
 
 function GeneratePage() {
-  const { connectionState } = useConnection()
-  const { web3, accounts, mContract, errors } = connectionState;
 
   const { configState, setConfigState, setInputDir, setOutputDir, createImages } = useGenerate();
 
@@ -19,6 +16,14 @@ function GeneratePage() {
   const handleDrag = (ev) => {
     setDragId(ev.currentTarget.id);
   };
+
+  const handleDragEnter = (ev) => {
+    ev.currentTarget.classList.add("dragging-over")
+  }
+
+  const handleDragLeave = (ev) => {
+    ev.currentTarget.classList.remove("dragging-over")
+  }
 
   const handleDrop = (ev) => {
     let dragBoxIndex;
@@ -105,17 +110,19 @@ function GeneratePage() {
           <Box height="30" />
 
           {configState.properties.slice().reverse().map((property, index) =>
-            <div className="draggable">
-
+            <div
+              key={property.id}
+              className="draggable"
+              id={property.id}
+              draggable="true"
+              onDragOver={(ev) => ev.preventDefault()}
+              onDragStart={handleDrag}
+              onDrop={handleDrop}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+            >
               <div
-                className="draggable-strip"
-                key={property.name}
-                id={property.id}
-                draggable="true"
-                onDragOver={(ev) => ev.preventDefault()}
-                onDragStart={handleDrag}
-                onDrop={handleDrop}
-              >
+                className="draggable-strip">
                 <div className="draggable-icon">
                   <div className="d"></div>
                   <div className="d"></div>
@@ -137,7 +144,7 @@ function GeneratePage() {
 
                 <div><Box height="15" />
                   {property.values.map((_value, vIndex) =>
-                    <div className="values-parent">
+                    <div key={_value.id} className="values-parent">
                       {vIndex === 0 ? <div style={{ marginBottom: "10px" }} className="value-flex"><p>Value</p><p>Weight</p></div> : <div></div>}
                       <div className="value-flex">
                         <p className="value">{_value.name}</p>
@@ -147,7 +154,8 @@ function GeneratePage() {
                           placeholder="weight"
                           onChange={(e) => {
                             let temp = configState.properties;
-                            temp[index].values[vIndex].weight = parseInt(e.target.value || 1)
+                            const curr = configState.properties.length - 1 - index
+                            temp[curr].values[vIndex].weight = parseInt(e.target.value || 1)
                             setConfigState({ ...configState, properties: temp })
                           }}
                           defaultValue={_value.weight}
@@ -177,6 +185,7 @@ function GeneratePage() {
             <div className="textfield">
               <label>Name Prefix *</label>
               <input
+                value={configState.namePrefix}
                 onChange={(e) => { setConfigState({ ...configState, namePrefix: e.target.value }) }}
                 type="text" placeholder='Your NFTs will be named as "<name_prefix>  #<token_id>" e.g. Cryptopunk #1'
                 required />
@@ -187,6 +196,7 @@ function GeneratePage() {
             <div className="textfield">
               <label>Description *</label>
               <input
+                value={configState.commonDescription}
                 onChange={(e) => { setConfigState({ ...configState, commonDescription: e.target.value }) }}
                 type="text" placeholder='Every NFT of your collection will have this description'
                 required />
@@ -198,6 +208,7 @@ function GeneratePage() {
               <div className="textfield">
                 <label>Height in Pixels *</label>
                 <input
+                  value={configState.height}
                   onChange={(e) => { setConfigState({ ...configState, height: e.target.value }) }}
                   type="number" placeholder='Enter height in pixels of your exported layers'
                   min={1}
@@ -209,6 +220,7 @@ function GeneratePage() {
               <div className="textfield">
                 <label>Width in Pixels *</label>
                 <input
+                  value={configState.width}
                   onChange={(e) => { setConfigState({ ...configState, width: e.target.value }) }}
                   type="number" placeholder='Enter width in pixels of your exported layers'
                   min={1} required />
@@ -221,9 +233,10 @@ function GeneratePage() {
               <div className="textfield">
                 <label>Number of NFTs *</label>
                 <input
+                  value={configState.outputSize}
                   onChange={(e) => { setConfigState({ ...configState, outputSize: e.target.value }) }}
                   type="number" placeholder='Enter number of NFTs you want to generate'
-                  max={1000}
+                  max={100}
                   min={1}
                   required
                 />

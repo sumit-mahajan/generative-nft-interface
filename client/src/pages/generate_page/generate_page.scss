@@ -77,10 +77,11 @@
 
         .underlined-field:focus {
             border-bottom: 0.2rem solid var(--primary);
-        }
-          
+        } 
     }
+}
 
-    
+.dragging-over {
+    background-color: var(--accent);
 }
 

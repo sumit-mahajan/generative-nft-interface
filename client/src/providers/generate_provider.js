@@ -185,8 +185,16 @@ export function GenerateProvider(props) {
 
             activeReqs++;
 
+            let imageCID
             // Upload image to IPFS
-            const imageCID = await uploadImage(blob);
+            try {
+                imageCID = await uploadImage(blob);
+            } catch (err) {
+                activeReqs--;
+                setConfigState({ ...configState, isLoading: false, error: "Can't upload to IPFS right now, try lower number or wait for some time" })
+                setMintState({ ...mintState, nfts: [] })
+                return;
+            }
 
             activeReqs--;
 

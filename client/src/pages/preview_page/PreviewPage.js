@@ -10,14 +10,15 @@ function PreviewPage() {
     const { mintState, setMintState } = useMint()
     const navigate = useNavigate()
     const [activeReqs, setActiveReqs] = useState(0)
+    const [error, setError] = useState("")
 
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
 
     const stopIfMoreReqs = () => {
-        if (activeReqs >= 15) {
-            setTimeout(stopIfMoreReqs, 100)
+        if (activeReqs >= 5) {
+            setTimeout(stopIfMoreReqs, 200)
         }
         return;
     }
@@ -33,8 +34,17 @@ function PreviewPage() {
 
             setActiveReqs(activeReqs + 1)
 
-            const metadataCID = await uploadMetadata(JSON.stringify(nft.metadata))
-            console.log("Metadata ", count + 1, " done")
+            let metadataCID;
+
+            try {
+                metadataCID = await uploadMetadata(JSON.stringify(nft.metadata))
+                console.log("Metadata ", count + 1, " done")
+            } catch (err) {
+                setActiveReqs(0)
+                setConfigState({ ...configState, isLoading: false })
+                setError("Sorry :( Can't upload right now. Try a lower number of images or wait for some time")
+                return;
+            }
 
             setActiveReqs(activeReqs - 1)
 
@@ -79,6 +89,10 @@ function PreviewPage() {
                 </div>
                 <Box width="50" />
                 <button onClick={handleNext}> Next </button>
+            </div>
+            <div className="center-child">
+                {error !== "" && <Box height="20" />}
+                <p className="error-field">{error}</p>
             </div>
 
             <Box height="50" />

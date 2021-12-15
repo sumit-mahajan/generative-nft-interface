@@ -60,7 +60,7 @@ function GeneratePage() {
     <div className="container">
       {configState.isLoading ?
         <Loading message={
-          configState.isDone ? "Uploading images and metadata to IPFS"
+          configState.isDone ? "Uploading metadata to IPFS"
             : "Generating " + configState.outputSize + " unique images"
         } /> : <div></div>}
 
@@ -98,7 +98,7 @@ function GeneratePage() {
         {/* SECTION 2 */}
         {configState.inputDirHandle !== null ? <div>
 
-          <p>2. Order layers  </p>
+          <p>2. Order layers &emsp; &emsp; <span>( The layer on the top is printed above the bottom ones )</span>  </p>
 
           <Box height="30" />
 

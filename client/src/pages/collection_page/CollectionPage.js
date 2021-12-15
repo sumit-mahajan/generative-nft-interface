@@ -11,7 +11,7 @@ import Loading from "../../components/loading/Loading";
 function CollectionPage() {
     const navigate = useNavigate()
 
-    const { connectionState, connectWallet } = useConnection()
+    const { connectionState } = useConnection()
     const { accounts, mContract } = connectionState;
 
     const { mintState, setMintState } = useMint()
@@ -19,7 +19,6 @@ function CollectionPage() {
     const [metadata, setMetadata] = useState({
         name: "",
         symbol: "",
-        image: "",
         description: "",
         twitterUrl: "",
         websiteUrl: "",
@@ -35,6 +34,7 @@ function CollectionPage() {
     const [isLoading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [cImage, setCImage] = useState("")
+    const [imageCID, setImageCID] = useState("")
     const [activeReqs, setActiveReqs] = useState(0)
 
     useEffect(() => {
@@ -46,33 +46,46 @@ function CollectionPage() {
     }
 
     const handleImage = async (e) => {
-        setActiveReqs(activeReqs + 1)
-        const blob = e.target.files[0]
+        setImageCID("")
+        if (error === "Please fill the rest of the form and then try uploading image") {
+            setError("")
+        }
 
+        const blob = e.target.files[0]
         var fr = new FileReader()
         fr.readAsDataURL(blob)
         fr.onload = () => {
             setCImage(fr.result)
         }
 
-        const imageCID = await uploadImage(blob)
+        let _imageCID;
+        try {
+            _imageCID = await uploadImage(blob)
+            console.log("Uploaded")
 
-        setMetadata({ ...metadata, image: imageCID })
-        setActiveReqs(activeReqs - 1)
-    }
+            setImageCID(_imageCID)
+        } catch (err) {
 
-    const waitTillReqsDone = () => {
-        if (activeReqs > 0) {
-            setTimeout(waitTillReqsDone, 100)
+            setImageCID("")
+            setCImage("")
+            setError("Please wait for some time and then try uploading image")
+            document.getElementById('imgpick').value = null;
+            return;
         }
-        return;
     }
 
     const handleSubmit = async () => {
-        waitTillReqsDone()
-
         setError("")
         setLoading(true)
+
+        if (imageCID === "") {
+            setError("Image is not uploaded yet")
+            setLoading(false)
+            return;
+        }
+        metadata.image = imageCID
+
+        console.log(metadata)
 
         try {
             const metadataCID = await uploadMetadata(JSON.stringify(metadata))
@@ -128,7 +141,7 @@ function CollectionPage() {
             <div className="row-flex">
                 <div className="textfield">
                     <label>Name *</label>
-                    <input
+                    <input value={metadata.name}
                         onChange={(e) => { setMetadata({ ...metadata, name: e.target.value }) }}
                         type="text" placeholder='Enter name for your collection e.g. Cryptopunks'
                         required />
@@ -138,7 +151,7 @@ function CollectionPage() {
 
                 <div className="textfield">
                     <label>Symbol *</label>
-                    <input
+                    <input value={metadata.symbol}
                         onChange={(e) => { setMetadata({ ...metadata, symbol: e.target.value }) }}
                         type="text" placeholder='Enter symbol for your collection'
                         required />
@@ -149,7 +162,7 @@ function CollectionPage() {
 
             <div className="textfield">
                 <label>Description *</label>
-                <input
+                <input value={metadata.description}
                     onChange={(e) => { setMetadata({ ...metadata, description: e.target.value }) }}
                     type="text" placeholder='Describe your collection, its utilty (if any)'
                     required />
@@ -160,7 +173,7 @@ function CollectionPage() {
             <div className="row-flex">
                 <div className="textfield">
                     <label>Twitter Url</label>
-                    <input
+                    <input value={metadata.twitterUrl}
                         onChange={(e) => { setMetadata({ ...metadata, twitterUrl: e.target.value }) }}
                         type="text" placeholder='Enter twitter profile Url'
                     />
@@ -170,7 +183,7 @@ function CollectionPage() {
 
                 <div className="textfield">
                     <label>Website Url</label>
-                    <input
+                    <input value={metadata.websiteUrl}
                         onChange={(e) => { setMetadata({ ...metadata, websiteUrl: e.target.value }) }}
                         type="text" placeholder='Enter website Url'
                     />

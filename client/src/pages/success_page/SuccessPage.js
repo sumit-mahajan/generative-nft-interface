@@ -8,7 +8,7 @@ import { useGenerate } from "../../providers/generate_provider";
 
 function SuccessPage() {
     const { mintState, setMintState } = useMint()
-    const { configState, setConfigState } = useGenerate()
+    const { setConfigState } = useGenerate()
 
     const navigate = useNavigate()
 
@@ -30,18 +30,31 @@ function SuccessPage() {
 
                 <Box height="50" />
 
-                <p onClick={() => { window.open(appURL, '_blank'); }}>Download Mintit mobile app from <span className="link"> here </span> to see the collection</p>
+                {/* <p onClick={() => { window.open(appURL, '_blank'); }}>Download Mintit mobile app from <span className="link"> here </span> to see the collection</p>
 
                 <Box height="20" />
                 <p>OR</p>
-                <Box height="20" />
+                <Box height="20" /> */}
 
                 <button onClick={() => {
                     setMintState({ nfts: [], collection: {} })
 
-                    setConfigState({ ...configState, isDone: false })
+                    setConfigState({
+                        inputDirHandle: null,
+                        outputDirHandle: null,
+                        namePrefix: "",
+                        commonDescription: "",
+                        width: "",
+                        height: "",
+                        outputSize: "",
+                        properties: [],
+                        isLoading: false,
+                        isDone: false,
+                        time: 0,
+                        error: "",
+                    })
 
-                    navigate('/')
+                    navigate('/generate')
                 }} style={{ width: "200px" }}>Create Again</button>
 
                 <Box height="70" />

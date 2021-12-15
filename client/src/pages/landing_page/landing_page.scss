@@ -8,6 +8,12 @@
     height: 375px;
 }
 
+@media (max-width: 1280px) {
+    .illustration {
+        height: 300px;
+    }
+  }
+
 ul{
     margin-left: 1.7rem;
     text-align: left;

@@ -6,16 +6,16 @@ import "./CustomCollection.sol";
 contract Marketplace {
     // ** User ** //
 
-    // // To store user data
-    // struct User {
-    //     string name;
-    //     string image;
-    //     string twitterUrl;
-    //     string websiteUrl;
-    // }
+    // To store user data
+    struct User {
+        string name;
+        string image;
+        string twitterUrl;
+        string websiteUrl;
+    }
 
     // // To store users (address => User)
-    // mapping(address => User) public users;
+    mapping(address => User) public users;
 
     // On user creation/updation
     event UserCreated(
@@ -34,7 +34,7 @@ contract Marketplace {
         string memory websiteUrl_
     ) public {
         // Map address to User
-        // users[msg.sender] = User(name_, image_, twitterUrl_, websiteUrl_);
+        users[msg.sender] = User(name_, image_, twitterUrl_, websiteUrl_);
 
         // Log event to subgraph
         emit UserCreated(msg.sender, name_, image_, twitterUrl_, websiteUrl_);
@@ -88,8 +88,8 @@ contract Marketplace {
         );
     }
 
-    // Function to receive funds. 
+    // Function to receive funds.
     // Called when transfer is executed on this contract address
-    // msg.data must be empty 
+    // msg.data must be empty
     receive() external payable {}
 }

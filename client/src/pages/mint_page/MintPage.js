@@ -26,34 +26,53 @@ function MintPage() {
 
         let cContract = await createCollectionInstance(web3, mintState.collection.address);
 
-        try {
-            const names = mintState.nfts.map((nft) => nft.metadata.name)
-            const images = mintState.nfts.map((nft) => nft.metadata.image)
-            const properties = mintState.nfts.map((nft) => JSON.stringify(nft.metadata.properties).toString())
-            const metadatas = mintState.nfts.map((nft) => nft.metadataCID)
+        let batchFactor = 20
+        let listOfLists = []
+        let count = 0
 
-            await cContract.methods
-                .mintBatch(
-                    names,
-                    images,
-                    properties,
-                    metadatas,
-                    mintState.nftData.forSale,
-                    mintState.nftData.isFixedPrice,
-                    mintState.nftData.price,
-                    mintState.nftData.royalty,
-                    mintState.nfts.length
-                )
-                .send({ from: accounts[0] })
-
-            setLoading(false)
-
-            navigate('/success');
-
-        } catch (err) {
-            setError("Denied Metamask Tx Signature")
-            setLoading(false)
+        for (let i = 0; i < mintState.nfts.length; i += batchFactor) {
+            let names = [], images = [], properties = [], metadatas = [];
+            for (let j = i; j < i + batchFactor; j++) {
+                names.push(mintState.nfts[j].metadata.name)
+                images.push(mintState.nfts[j].metadata.image)
+                properties.push(JSON.stringify(mintState.nfts[j].metadata.properties).toString())
+                metadatas.push(mintState.nfts[j].metadataCID)
+            }
+            listOfLists.push({ names, images, properties, metadatas })
+            count++
         }
+
+        let rejected = 0;
+        listOfLists.forEach(async (listObject, index) => {
+            try {
+                await cContract.methods
+                    .mintBatch(
+                        listObject.names,
+                        listObject.images,
+                        listObject.properties,
+                        listObject.metadatas,
+                        mintState.nftData.forSale,
+                        mintState.nftData.isFixedPrice,
+                        mintState.nftData.price,
+                        mintState.nftData.royalty,
+                        mintState.nfts.length
+                    )
+                    .send({ from: accounts[0] })
+
+                if (index + 1 === count) {
+                    setLoading(false)
+
+                    navigate('/success');
+                }
+            } catch (err) {
+                rejected++;
+                if (rejected === count) {
+                    setError("Denied Metamask Tx Signature")
+                    setLoading(false)
+                }
+            }
+        })
+
     }
 
     return (<div className="container">
@@ -82,11 +101,12 @@ function MintPage() {
                     <Box width="30" />
                     <div className="describe-box">
                         <p className="sub-text">{mintState.collection.metadata.name}</p>
-                        <Box height="20" />
+                        <Box height="15" />
                         <p className="sub-text">{mintState.collection.metadata.description}</p>
+                        <Box height="15" />
+                        <p className="sub-text">{mintState.collection.address}</p>
                     </div>
                     <Box width="50" />
-
                 </div>
             </div>
             <div className="listing-details">
@@ -97,7 +117,10 @@ function MintPage() {
                 </p>
                 <Box height="15" />
                 <p className="sub-text">
-                    {mintState.nftData.forSale ? mintState.nftData.isFixedPrice ? "Price: " + parseFloat(BigInt(mintState.nftData.price) / BigInt(1e18)) : "Minimum Bidding Price: " + parseFloat(BigInt(mintState.nftData.price) / BigInt(1e18)) : ""} MATIC
+                    {mintState.nftData.forSale ? mintState.nftData.isFixedPrice ?
+                        "Price: " + Number(BigInt(mintState.nftData.price) * 10000n / BigInt(1e18)) / 10000
+                        : "Minimum Bidding Price: " + Number(BigInt(mintState.nftData.price) * 10000n / BigInt(1e18)) / 10000 : ""
+                    } MATIC
                 </p>
                 <Box height="15" />
                 <p className="sub-text">
@@ -106,11 +129,11 @@ function MintPage() {
             </div>
         </div>
 
-        <Box height="40" />
+        <Box height="50" />
 
         Preview of NFTs to be minted
 
-        <Box height="40" />
+        <Box height="50" />
 
         <div className="nft-grid">
             {mintState.nfts.sort((a, b) => a.id - b.id).map((nft) =>

@@ -15,6 +15,12 @@ function App() {
 
   const { errors } = connectionState;
 
+  if (!(navigator.userAgent.indexOf("Chrome") > -1)) {
+    return (
+      <div className="backdrop">Ohh snap! This website is supported only on Google Chrome or Microsoft Edge since it uses Filesystem API</div>
+    );
+  }
+
   if (errors) {
     return (
       <div className="backdrop">{errors}</div>

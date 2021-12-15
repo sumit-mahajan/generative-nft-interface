@@ -3,7 +3,7 @@ import axios from "axios";
 const imageInstance = axios.create({
     baseURL: 'https://api.nft.storage/upload',
     headers: {
-        'Authorization': 'Bearer ' + process.env.REACT_APP_API_KEY,
+        'Authorization': 'Bearer ' + process.env.REACT_APP_IMG_KEY,
         'Content-Type': 'image/*',
         'Access-Control-Allow-Origin': '*'
     }
@@ -12,7 +12,7 @@ const imageInstance = axios.create({
 const metadataInstance = axios.create({
     baseURL: 'https://api.nft.storage/upload',
     headers: {
-        'Authorization': 'Bearer ' + process.env.REACT_APP_API_KEY,
+        'Authorization': 'Bearer ' + process.env.REACT_APP_METADATA_KEY,
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
     }

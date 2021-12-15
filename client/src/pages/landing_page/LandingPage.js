@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "../../components/Box";
 import "./landing_page.scss";
 import { useNavigate } from 'react-router-dom';
-
+/* global BigInt */
 
 function LandingPage() {
 
@@ -25,9 +25,10 @@ function LandingPage() {
                         <Box height="10" />
                         <li>Customize rarity of traits and generate metadata</li>
                         <Box height="10" />
-                        <li>No uploading / downloading of images. Your art doesn't leave your browser until it is minted</li>
+                        <li>No uploading / downloading of images. Completely private client side tool <br />( Works only on Chrome & Edge ) </li>
                         <Box height="10" />
-                        <li>Adjoined Minting interface to create a new collection and batch minting of NFTs on MINTIT's mobile NFT marketplace
+                        <li>Adjoined Minting interface to create a new collection and batch minting of NFTs
+                            {/* on MINTIT's mobile NFT marketplace */}
                         </li>
                     </ul>
                     <Box height="50" />

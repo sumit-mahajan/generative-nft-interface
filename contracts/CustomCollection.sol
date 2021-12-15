@@ -21,10 +21,10 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
     address payable public creator;
 
     // Store collection Metadata URI
-    string collectionMetadataURI;
+    string public collectionMetadataURI;
 
     // Store Marketplace address
-    address payable marketPlaceAddress;
+    address payable public marketPlaceAddress;
 
     // On Collection creation
     constructor(
@@ -56,7 +56,7 @@ contract CustomCollection is ReentrancyGuard, ERC721URIStorage {
     mapping(uint256 => NFT) public nfts;
 
     // To store bids (tokenId => (address => price))
-    mapping(uint256 => mapping(address => uint256)) bids;
+    mapping(uint256 => mapping(address => uint256)) public bids;
 
     // tokenId to secret
     mapping(uint256 => string) unlockableContent;
